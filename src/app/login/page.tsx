@@ -85,7 +85,15 @@ function Login() {
       showPassword ? <EyeOff className='absolute right-3 top-3.5 w-5 h-5 text-gray-400 cursor-pointer' onClick={()=>setShowPassword(!showPassword)}/> : <Eye className='absolute right-3 top-3.5 w-5 h-5 text-gray-400 cursor-pointer' onClick={()=>setShowPassword(!showPassword)}/>
      }
       </div>
+      <div className='flex gap-3'>
+
       <button disabled={!formValidation() || loading} className={`w-full font-semibold py-3 rounded-xl transition-all duration-200 shadow-md inline-flex item-center justify-center gap-2 ${formValidation()?"bg-green-600 hover:bg-green-700 text-white cursor-pointer":" bg-gray-300 text-gray-500 cursor-not-allowed"}`}>{loading?<Loader2 className=' animate-spin'/>:'Login'}</button>
+
+
+      <div className={`w-full font-semibold py-3 rounded-xl transition-all duration-200 shadow-md inline-flex item-center justify-center gap-2 cursor-pointer hover:bg-red-100 bg-red-50 text-red-600`} onClick={()=>router.push('/')}>
+        Cancle
+      </div>
+      </div>
 
       <div className='flex items-center gap-2 text-gray-400 text-sm mt-2 '>
         <span className='flex-1 h-px bg-gray-200'></span>
@@ -103,5 +111,5 @@ function Login() {
     </div>
   )
 }
-
+  
 export default Login

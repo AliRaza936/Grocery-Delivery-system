@@ -1,14 +1,33 @@
 "use client"
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from "motion/react"
 import { ArrowRight, Bike, ShoppingBasket } from 'lucide-react'
 
-type propType = {
-    nextStep:(s:number)=>void
+interface WelcomeProps {
+  onFinish: () => void
 }
-function Welcome({nextStep}:propType) {
+
+function Welcome({ onFinish }: WelcomeProps) {
+const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const hasVisited = sessionStorage.getItem("hasVisited");
+    if (!hasVisited) {
+      setShow(true); // show Welcome if first visit
+    }
+  }, []);
+
+  const handleNext = () => {
+    sessionStorage.setItem("hasVisited", "true");
+    setShow(false);
+     onFinish(); 
+  };
+
+  if (!show) return null; // hide component if not first visit
+
+
   return (
-    <div className='flex flex-col justify-center items-center min-h-screen text-center p-6'>
+    <div className='flex flex-col justify-center items-center min-h-screen text-center p-6   bg-linear-to-b from-green-100 to-white '>
       <motion.div
       initial={{
         opacity:0,
@@ -86,8 +105,8 @@ function Welcome({nextStep}:propType) {
         
       }}
         className='inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-2xl shadow-md  transition-all duration-200 cursor-pointer mt-10'
-
-        onClick={()=>nextStep(2)}
+onClick={handleNext}
+      
         >
             Next
             <ArrowRight/>

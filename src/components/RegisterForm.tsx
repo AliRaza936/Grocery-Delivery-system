@@ -6,10 +6,8 @@ import googleImage from '@/assets/google.png'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-type propType = {
-    preStep:(s:number)=>void
-}
-function RegisterForm({preStep}:propType) {
+
+function RegisterForm() {
   const [name,setName] = useState("")
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")
@@ -38,12 +36,7 @@ const router = useRouter()
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen px-6 py-10 bg-white relative'>
-      <div className='absolute top-6 left-6 flex items-center gap-2 text-green-700 hover:text-green-800 transition-colors cursor-pointer '
-      onClick={()=>preStep(1)}
-      >
-        <ArrowLeft className='w-5 h-5'/>
-        <span className='font-medium'>Back</span>
-      </div>
+     
      <motion.h1
      initial={{
       opacity:0,
@@ -87,7 +80,14 @@ const router = useRouter()
       showPassword ? <EyeOff className='absolute right-3 top-3.5 w-5 h-5 text-gray-400 cursor-pointer' onClick={()=>setShowPassword(!showPassword)}/> : <Eye className='absolute right-3 top-3.5 w-5 h-5 text-gray-400 cursor-pointer' onClick={()=>setShowPassword(!showPassword)}/>
      }
       </div>
+      <div className='flex gap-2'>
       <button disabled={!formValidation() || loading} className={`w-full font-semibold py-3 rounded-xl transition-all duration-200 shadow-md inline-flex item-center justify-center gap-2 ${formValidation()?"bg-green-600 hover:bg-green-700 text-white cursor-pointer":" bg-gray-300 text-gray-500 cursor-not-allowed"}`}>{loading?<Loader2 className=' animate-spin'/>:'Register'}</button>
+
+<div className={`w-full font-semibold py-3 rounded-xl transition-all duration-200 shadow-md inline-flex item-center justify-center gap-2 cursor-pointer hover:bg-red-100 bg-red-50 text-red-600`} onClick={()=>router.push('/')}>
+        Cancle
+      </div>
+
+      </div>
 
       <div className='flex items-center gap-2 text-gray-400 text-sm mt-2 '>
         <span className='flex-1 h-px bg-gray-200'></span>
