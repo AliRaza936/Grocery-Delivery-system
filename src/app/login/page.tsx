@@ -16,7 +16,7 @@ function Login() {
   const [loading,setLoading] = useState(false)
   let router = useRouter()
   const session = useSession()
-  console.log(session)
+
 
 
   const formValidation = ()=>{
@@ -33,6 +33,7 @@ function Login() {
         await signIn('credentials',{
           email,
           password,
+           redirect: false,   
         })
         router.push('/')
         setLoading(false)
