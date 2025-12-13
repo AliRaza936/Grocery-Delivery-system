@@ -1,11 +1,12 @@
 "use client";
-import { Cross, LogOut, Package, Search, ShoppingCartIcon, User, X } from "lucide-react";
+import { Boxes, ClipboardCheck, Cross, LogOut, Menu, Package, PlusCircle, Search, ShoppingCartIcon, User, X } from "lucide-react";
 import mongoose from "mongoose";
 import { AnimatePresence, motion } from "motion/react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 interface IUser {
   _id?: mongoose.Types.ObjectId;
   name: string;
@@ -19,6 +20,8 @@ function Nav({ user }: { user: IUser }) {
   const [open, setOpen] = useState(false);
   const profileDropDown = React.useRef<HTMLDivElement>(null);
   const [searchBarOpen, setSearchBarOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  console.log('askbdbajfblsbnbf',user)
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -35,6 +38,68 @@ function Nav({ user }: { user: IUser }) {
     };
   }, []);
 
+  let sideBar = menuOpen ? createPortal(
+    <AnimatePresence>
+      <motion.div 
+      initial={{x:-100,opacity:0}}
+      animate={{x:0,opacity:1}}
+      exit={{x:-100,opacity:0}}
+      transition={{type:"spring",stiffness:100,damping:14}}
+      className="fixed top-0 left-0 h-full w-[75%] sm:[60%] z-9999 bg-linear-to-b from-green-800/90 to-green-900/90 backdrop-blur-xl border-r border-green-400/20 shadow-[0_0_50px_-10px_rgba(0,255,100,0.3)] flex flex-col p-6 text-white"
+      >
+        <div className="flex justify-between items-center mb-2 ">
+          <h1 className="font-extrabold text-2xl tracking-wide text-white/90 ">Admin Panel</h1>
+          <button className="text-white/80 hover:text-red-400 text-2xl font-bold transition cursor-pointer" onClick={()=>setMenuOpen(false)}><X/></button>
+        </div>
+        <div className="flex items-center gap-3 p-3 mt-3 rounded-xl bg-white/10 hover:bg-white/15 transition-all shadow-inner">
+             <div
+            className="relative bg-white rounded-full w-12 h-12 border-2 border-green-400/60 "
+            onClick={() => setOpen((pre) => !pre)}
+          >
+            {user?.image ? (
+              <Image
+                src={user.image}
+                alt="user"
+                fill
+                className="object-cover rounded-full"
+              />
+            ) : !user ?(<User/>):(
+              <div className="flex justify-center bg-green-200   w-full h-full items-center">
+                <span className="text-2xl font-semibold capitalize text-gray-700">{user?.name?.charAt(0)}</span>
+              </div>
+            ) }
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-white">{user?.name}</h2>
+            <p className="text-xs text-green-200 capitalize tracking-wide">{user?.role}</p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 font-medium mt-6 ">
+           <Link href={""} className="flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20 hover:pl-4 transition-all">
+          <PlusCircle className="w-5 h-5"/> Add Grocery
+          </Link>
+          <Link href={""} className="flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20 hover:pl-4 transition-all">
+          <Boxes className="w-5 h-5"/> View Grocery
+          </Link>
+          <Link href={""} className="flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20 hover:pl-4 transition-all">
+          <ClipboardCheck className="w-5 h-5"/> Manage Grocery
+          </Link>
+
+        </div>
+
+<div className="my-5 border-t border-white/20"></div>
+<div className="flex items-center gap-3 text-red-300 font-semibold mt-auto hover:bg-red-500/20 p-3 rounded-lg transition-all"
+onClick={async()=>await signOut({callbackUrl:"/"})}
+>
+  <LogOut className="w-5 h-5 text-red-300"/>
+  LogOut
+</div>
+      </motion.div>
+
+    </AnimatePresence>,document.body
+  ) : null
+
   return (
     <div className="w-[95%] fixed top-4 left-1/2 -translate-x-1/2 bg-linear-to-r from-green-500 to-green-700 rounded-2xl shadow-lg shadow-black/30 flex justify-between items-center h-20 px-4 md:px-8 z-50">
       <Link
@@ -43,8 +108,7 @@ function Nav({ user }: { user: IUser }) {
       >
         Grocify
       </Link>
-
-      <div className="hidden md:flex items-center bg-white rounded-full px-4 py-2 w-1/2 max-w-lg">
+{ (!user || user?.role =="user") && <div className="hidden md:flex items-center bg-white rounded-full px-4 py-2 w-1/2 max-w-lg">
         {" "}
         <Search className="text-gray-500 w-5 h-5 mr-2" />{" "}
         <input
@@ -52,9 +116,12 @@ function Nav({ user }: { user: IUser }) {
           placeholder="Search groceries..."
           className="w-full outline-none text-gray-700 placeholder-gray-400"
         />{" "}
-      </div>
+      </div>}
+      
 
       <div className="flex items-center gap-3 md:gap-6 relative ">
+
+        {(!user || user?.role == "user")  && <>
         <div
           className="bg-white rounded-full w-11 h-11 flex items-center justify-center shadow-md hover:scale-105 transition md:hidden"
           onClick={() => setSearchBarOpen((pre) => !pre)}
@@ -71,6 +138,27 @@ function Nav({ user }: { user: IUser }) {
             0
           </span>
         </Link>
+        </>}
+        
+        {user?.role == "admin" && <>
+        
+        <div className="hidden md:flex items-center gap-4">
+          <Link href={""} className="flex items-center gap-2 bg-white text-green-700 font-semibold px-4 py-2 rounded-full hover:bg-green-100 transition-all">
+          <PlusCircle className="w-5 h-5"/> Add Grocery
+          </Link>
+          <Link href={""} className="flex items-center gap-2 bg-white text-green-700 font-semibold px-4 py-2 rounded-full hover:bg-green-100 transition-all">
+          <Boxes className="w-5 h-5"/> View Grocery
+          </Link>
+          <Link href={""} className="flex items-center gap-2 bg-white text-green-700 font-semibold px-4 py-2 rounded-full hover:bg-green-100 transition-all">
+          <ClipboardCheck className="w-5 h-5"/> Manage Grocery
+          </Link>
+
+        </div>
+        <div className="md:hidden bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md" onClick={()=>setMenuOpen(pre=>!pre)}>
+          <Menu className="text-green-600 w-6 h-6"/>
+        </div>
+
+        </>}
 
         <div className="relative" ref={profileDropDown}>
           <div
@@ -84,9 +172,11 @@ function Nav({ user }: { user: IUser }) {
                 fill
                 className="object-cover rounded-full"
               />
-            ) : (
-              <User />
-            )}
+            ) : !user ?(<User/>):(
+              <div className="flex justify-center bg-green-200   w-full h-full items-center">
+                <span className="text-2xl font-semibold capitalize text-gray-700">{user?.name?.charAt(0)}</span>
+              </div>
+            ) }
           </div>
 
           <AnimatePresence>
@@ -124,27 +214,29 @@ function Nav({ user }: { user: IUser }) {
                             className="object-cover rounded-full"
                           />
                         ) : (
-                          <User />
+                          <div className="flex justify-center ">
+                            <span className="capitalize font-semibold text-xl text-gray-600">{user.name.charAt(0)}</span>
+                          </div>
                         )}
                       </div>
                       <div>
                         <div className="text-gray-800 font-semibold">
-                          {user.name}
+                          {user?.name}
                         </div>
                         <div className="text-xs text-gray-500 capitalize">
-                          {user.role}
+                          {user?.role}
                         </div>
                       </div>
                     </div>
-
-                    <Link
+                        {(!user || user?.role == "user") &&  <Link
                       href={""}
                       className="flex items-center gap-2 px-3 py-3 hover:bg-green-50 rounded-lg text-gray-700 font-medium"
                       onClick={() => setOpen(false)}
                     >
                       <Package className="w-5 h-5 text-green-600" />
                       My Orders
-                    </Link>
+                    </Link>}
+                    
 
                     <button
                       className="flex items-center gap-2 w-full text-left px-3 py-3 hover:bg-red-50 rounded-lg text-gray-700 font-medium cursor-pointer"
@@ -226,8 +318,10 @@ function Nav({ user }: { user: IUser }) {
               </motion.div>
             )}
           </AnimatePresence>
+
         </div>
       </div>
+          {sideBar}
     </div>
   );
 }

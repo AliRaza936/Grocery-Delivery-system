@@ -4,6 +4,7 @@ import { motion, scale } from "motion/react";
 import { ArrowRight, Bike, User } from "lucide-react";
 import axios from "axios";
 import { redirect, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 function EditRoleMobile() {
   const [role, setRole] = useState([
@@ -14,12 +15,14 @@ function EditRoleMobile() {
   const [mobile, setMobile] = useState("");
   const [loading, setLoading] = useState(false);
     let router = useRouter()
+      const {update} = useSession()
 
 const handleEditRoleMobile = async () => {
     setLoading(true)
     try {
         const result = await axios.post("/api/user/edit-role-mobile",{role:selectedRole,mobile})
         setLoading(false)
+        await update({role:result.data.role})
         router.push('/')
     } catch (error) {
         console.log("Error updating role and mobile:", error)

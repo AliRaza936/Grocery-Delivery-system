@@ -19,6 +19,8 @@ function Login() {
 
 
 
+
+
   const formValidation = ()=>{
     if( email.trim() === "" || password.trim() === ""){
       return false
@@ -35,6 +37,7 @@ function Login() {
           password,
            redirect: false,   
         })
+    
         router.push('/')
         setLoading(false)
     } catch (error) {
