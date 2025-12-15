@@ -1,9 +1,10 @@
 "use client"
-import { ArrowLeft, PlusCircle, Upload } from "lucide-react";
+import { ArrowLeft, Loader2, PlusCircle, Upload } from "lucide-react";
 import Link from "next/link";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import {motion} from 'motion/react'
 import Image from "next/image";
+import axios from "axios";
 
 
   const categories =[
@@ -11,6 +12,7 @@ import Image from "next/image";
             "Dairy & Eggs",
             "Rice, Atta & Grains",
             "Snacks & Biscuits",
+            "Spices & Masalas",
             "Beverages & Drinks",
             "Personal Care",
             "Household Essentials",
@@ -26,6 +28,8 @@ function AddGrocery() {
   const [preview,setPreview] = useState<string|null>()
   const [backendImage,setBackendImage] = useState<File|null>()
 
+  const [loading,setLoading] = useState(false)
+
 const handleImageChange = (e:ChangeEvent<HTMLInputElement>)=>{
   const files = e.target.files
   if(!files || files.length == 0) return
@@ -35,6 +39,29 @@ const handleImageChange = (e:ChangeEvent<HTMLInputElement>)=>{
   setPreview(URL.createObjectURL(file))
 }
 
+const handleSubmit = async(e:FormEvent)=>{
+  e.preventDefault()
+
+  try {
+    const formData = new FormData()
+    formData.append('name',name)
+    formData.append('category',category)
+    formData.append('price',price)
+    formData.append('unit',unit)
+
+    if(backendImage){
+
+      formData.append('image',backendImage)
+    }
+    setLoading(true)
+    let result = await axios.post("/api/admin/add-grocery",formData)
+    console.log(result)
+    setLoading(false)
+  } catch (error) {
+    console.log(error)
+    setLoading(false)
+  }
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-green-50 to-white py-16 px-4 relative">
@@ -60,7 +87,7 @@ const handleImageChange = (e:ChangeEvent<HTMLInputElement>)=>{
 
       </div>
 
-      <form >
+      <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6 w-full">
             <div>
               <label htmlFor="name" className="block text-gray-700 font-medium mb-1">
@@ -117,11 +144,13 @@ const handleImageChange = (e:ChangeEvent<HTMLInputElement>)=>{
             </div>
 
             <motion.button
+            disabled={loading}
   whileHover={{ scale: 1.02 }}
   whileTap={{ scale: 0.9 }}
   className="mt-4 w-full bg-linear-to-r from-green-500 to-green-700 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl disabled:opacity-60 transition-all flex items-center justify-center gap-2 cursor-pointer"
 >
-  Add Grocery
+  {loading?<Loader2 className="animate-spin" />:"Add Grocery"}
+ 
 </motion.button>
 
         </div>

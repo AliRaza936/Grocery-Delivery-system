@@ -19,11 +19,13 @@ const GrocerySchema = new mongoose.Schema<IGrocery>({
             "Dairy & Eggs",
             "Rice, Atta & Grains",
             "Snacks & Biscuits",
+            "Spices & Masalas",
             "Beverages & Drinks",
             "Personal Care",
             "Household Essentials",
             "Instant & Packaged Foods",
-            "Baby & Pet Care"
+            "Baby & Pet Care",
+
         ],
         required: true
      },
