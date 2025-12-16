@@ -15,6 +15,7 @@ interface IGrocery {
   updatedAt?: Date;
 }
 function GroceryItemCard({item}:{item:IGrocery}) {
+  console.log(item)
   return (
     <motion.div
       initial={{opacity:0,y:50,scale:0.9}}
