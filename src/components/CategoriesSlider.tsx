@@ -30,10 +30,7 @@ const scroll = (direction:'left' | 'right')=>{
 const checkScroll = ()=>{
     if(!scrollRef.current) return
     const {scrollLeft,scrollWidth,clientWidth} = scrollRef.current
-    console.log("scrollwidtg",scrollLeft+clientWidth<=scrollWidth-5)
-    console.log("scrolwidth",scrollRef.current.scrollWidth-5)
-    console.log("clientWidth",scrollRef.current.clientWidth)
-    console.log("leftWidth",scrollRef.current.scrollLeft)
+  
     setShowLeft(scrollLeft>0)
     setShowRight(scrollLeft+clientWidth<=scrollWidth-5)
 }

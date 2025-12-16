@@ -21,7 +21,7 @@ function Nav({ user }: { user: IUser }) {
   const profileDropDown = React.useRef<HTMLDivElement>(null);
   const [searchBarOpen, setSearchBarOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  console.log('askbdbajfblsbnbf',user)
+ 
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
