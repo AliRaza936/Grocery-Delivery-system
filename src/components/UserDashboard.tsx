@@ -4,6 +4,7 @@ import CategoriesSlider from './CategoriesSlider'
 import dbConnect from '@/config/db'
 import Grocery from '@/models/grocery.model'
 import GroceryitemCard from "@/components/GroceryItemCard"
+import BudgetTracker from './BudgetTracker'
 
 async function UserDashboard() {
   await dbConnect()
@@ -12,6 +13,15 @@ async function UserDashboard() {
   return (
     <>
      <HeroSection/>
+
+        <BudgetTracker
+          
+         
+        />
+
+        
+
+
      <CategoriesSlider/>
      <div className='w-[90%] md:w-[80%] mx-auto mt-10'>
         <h2 className='text-2xl md:text-3xl font-bold text-green-700 mb-6 text-center'>Popular Grocery Items</h2>
