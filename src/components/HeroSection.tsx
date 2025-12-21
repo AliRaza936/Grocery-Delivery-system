@@ -3,7 +3,7 @@ import { Leaf, ShoppingBasket, Smartphone, Truck } from 'lucide-react';
 import { AnimatePresence ,motion} from 'motion/react';
 import Image from 'next/image';
 import React, { useEffect } from 'react'
-import { setInterval } from 'timers';
+
 
 const HeroSection = () => {
    const slides = [
@@ -44,13 +44,14 @@ let [currentSlide, setCurrentSlide] = React.useState(0);
 useEffect(() => {
  
 const timer = setInterval(()=>{
+  
     setCurrentSlide((prevSlide) => (prevSlide + 1) %( slides.length));
 },5000)
   return ()=>clearInterval(timer)
-}, [])
+}, [currentSlide])
 
   return (
-    <div className='w-[98%] relative mx-auto mt-28 h-[80vh] rounded-3xl overflow-hidden shadow-2xl'>
+    <div className='w-[98%] relative mx-auto mt-28 h-[60vh] md:h-[80vh] rounded-3xl overflow-hidden shadow-2xl'>
       <AnimatePresence mode='wait'>
         <motion.div
         key={currentSlide}
@@ -58,9 +59,9 @@ const timer = setInterval(()=>{
         animate={{opacity:1}}
         transition={{duration:0.8}}
         exit={{opacity:0}}
-        className='absolute inset-1'
+        className='absolute inset-0'
         >
-                <Image src={slides[currentSlide]?.bg} fill alt='slide' priority className='sm:object-fit md:object-fill'/>
+                <Image src={slides[currentSlide]?.bg} fill alt='slide' priority className=''/>
             <div className='absolute inset-0 bg-black/50 backdrop-blur-[1px]'/>
         </motion.div>
       </AnimatePresence>
@@ -80,7 +81,7 @@ const timer = setInterval(()=>{
             whileTap={{scale:0.96}}
             transition={{duration:0.2}}
             
-            className='mt-4 bg-white text-green-700 hover:bg-green-100 px-8 py-3 rounded-full font-semibold shadow-lg transition-all duration-300 flex items-center gap-2 cursor-pointer'>
+            className='mt-4 bg-white text-green-700 hover:bg-green-100 px-8 py-3 rounded-full font-semibold shadow-lg transition-all duration-300 flex items-center gap-2 '>
                 <ShoppingBasket className='w-5 h-5 '/>
                 {slides[currentSlide]?.btnText}
             </motion.button>
