@@ -157,7 +157,7 @@ const handleCurrentLocation = ()=>{
 
                   <div className='relative'>
                     <User className='absolute left-3 top-3 text-green-600' size={18}/>
-                            <input type="text" value={address.fullName} placeholder='Full Nmae' onChange={(e)=>setAddress((pre)=>({...pre,fullName:e.target.value }))} className='pl-10 w-full border border-gray-300  rounded-lg p-3 text-sm bg-gray-50 outline-none focus:ring-2 focus:ring-green-400'/>
+                            <input type="text" value={address.fullName} placeholder='Full Name' onChange={(e)=>setAddress((pre)=>({...pre,fullName:e.target.value }))} className='pl-10 w-full border border-gray-300  rounded-lg p-3 text-sm bg-gray-50 outline-none focus:ring-2 focus:ring-green-400'/>
                   </div>
                   <div className='relative'>
                     <Phone className='absolute left-3 top-3 text-green-600' size={18}/>
