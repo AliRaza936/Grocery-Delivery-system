@@ -59,6 +59,7 @@ const timer = setInterval(()=>{
         animate={{opacity:1}}
         transition={{duration:0.8}}
         exit={{opacity:0}}
+         
         className='absolute inset-0'
         >
                 <Image src={slides[currentSlide]?.bg} fill alt='slide' priority className=''/>

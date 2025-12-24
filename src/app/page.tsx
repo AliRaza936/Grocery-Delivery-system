@@ -15,7 +15,7 @@ const Home = async () => {
   await dbConnect();
   let session = await auth();
   const user = await User.findById(session?.user?.id);
-console.log("user home page:", user);
+
   if (user) {
     const inCompleteProfile =
       !user?.mobile || !user?.role || (!user.mobile && user.role === "user");

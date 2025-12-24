@@ -5,6 +5,7 @@ import dbConnect from '@/config/db'
 import Grocery from '@/models/grocery.model'
 import GroceryitemCard from "@/components/GroceryItemCard"
 import BudgetTracker from './BudgetTracker'
+import { AnimatePresence } from 'motion/react'
 
 async function UserDashboard() {
   await dbConnect()
