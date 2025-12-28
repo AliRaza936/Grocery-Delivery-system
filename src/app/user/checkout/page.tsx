@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
-import { ArrowLeft, Building, CreditCard, CreditCardIcon, Home, Loader2, Locate, LocateFixed, Map, MapPin, Navigation, Phone, SearchCodeIcon, Truck, User } from 'lucide-react'
+import { ArrowLeft, Building, Circle, CreditCard, CreditCardIcon, Home, Loader2, Locate, LocateFixed, Map, MapPin, Navigation, Phone, SearchCodeIcon, Truck, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/redux/store'
@@ -39,6 +39,7 @@ const [searchQuery,setSearchQuery] = useState('')
 const [position,setPosition] = useState<[number,number] | null>(null)
 const [searchloading ,setsearchloading] = useState(false)
 const [paymentMethod,setPaymentMethod] = useState<'cod' | 'online'>('cod')
+const [fixedPosLoading,setFixedPosLoading] = useState(false)
 
 useEffect(()=>{
   if(navigator.geolocation){
@@ -82,11 +83,9 @@ useEffect(()=>{
     }
 try {
   const result = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${position[0]}&lon=${position[1]}&format=json`)
-  console.log(result.data)
+
    setAddress((pre)=>({...pre,city:result.data.address.city || '',state:result.data.address.state ||"",pincode:result.data.address.postcode ||"",fullAddress:result.data.display_name ||"" }))
-  //  setAddress((pre)=>({...pre,state:result.data.address.state }))
-  //  setAddress((pre)=>({...pre,pincode:result.data.address.postcode }))
-  //  setAddress((pre)=>({...pre,fullAddress:result.data.display_name }))
+  
 } catch (error) {
   console.log(error)
 }
@@ -101,7 +100,7 @@ const handleSearchQuery = async()=>{
   setsearchloading(true)
   const provider = new OpenStreetMapProvider()
   const results = await provider.search({ query:searchQuery});
-  console.log(results)
+
   if(results ){
 setsearchloading(false)
 if(results.length>0){
@@ -111,15 +110,27 @@ if(results.length>0){
   }
 }
 const handleCurrentLocation = ()=>{
-  if(navigator.geolocation){
 
+  setFixedPosLoading(true)
+  if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition((pos)=>{
       const {latitude,longitude} = pos.coords
       setPosition([latitude,longitude])
-    },(err)=>{console.log('location error',err)},{enableHighAccuracy:true,maximumAge:0,timeout:30000})
+      setFixedPosLoading(false)
+    },(err)=>{
+      setFixedPosLoading(false)
+      console.log('location error',err)},{enableHighAccuracy:true,maximumAge:0,timeout:30000
+
+      })
   }
 }
+useEffect(() => {
+  const timer = setTimeout(() => {
+    handleCurrentLocation()
+  }, 1500)
 
+  return () => clearTimeout(timer)
+}, [])
   return (
     <div className="w-[92%] md:w-[80%] mx-auto py-10 relative">
 
@@ -202,7 +213,10 @@ const handleCurrentLocation = ()=>{
                     <motion.button onClick={handleCurrentLocation}
                     whileTap={{scale:0.93}}
                      className='absolute bottom-4 right-4 bg-green-600 text-white shadow-lg rounded-full p-3 hover:bg-green-700 transition-all flex items-center justify-center z-999 cursor-pointer'>
-                      <LocateFixed/>
+                      {
+                        fixedPosLoading ? <Loader2 className='animate-spin'/> : <LocateFixed/>
+                      }
+                     
                     </motion.button>
                      
                   </div>
