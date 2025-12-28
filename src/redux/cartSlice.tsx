@@ -63,9 +63,16 @@ const cartSlice = createSlice({
             state.subTotal = state.cartData.reduce((sum,item)=>sum + Number(item.price)*item.quantity,0)
             state.deliveryfee = state.subTotal > 500 ? 0 : 90
             state.finalTotal = state.subTotal + state.deliveryfee
-       }
+       },
+       clearCart: (state) => {
+  state.cartData = [];
+  state.subTotal = 0;
+  state.deliveryfee = 90;
+  state.finalTotal = 90;
+}
+
     }
 })
 
-export const {addToCart,increaseQuantity,decreaseQuantity,removeFromCart} = cartSlice.actions
+export const {addToCart,increaseQuantity,decreaseQuantity,removeFromCart,clearCart} = cartSlice.actions
 export default cartSlice.reducer

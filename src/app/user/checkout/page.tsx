@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { ArrowLeft, Building, Circle, CreditCard, CreditCardIcon, Home, Loader2, Locate, LocateFixed, Map, MapPin, Navigation, Phone, SearchCodeIcon, Truck, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/redux/store'
 
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
@@ -13,6 +13,8 @@ import "leaflet/dist/leaflet.css"
 
 import axios from 'axios'
 import { OpenStreetMapProvider } from 'leaflet-geosearch'
+import { clearCart } from '@/redux/cartSlice'
+
 
 
 const markerIcon = new L.Icon({
@@ -22,8 +24,9 @@ const markerIcon = new L.Icon({
 })
 function Checkout() {
   const router = useRouter()
+  const dispatch = useDispatch()
 const {userData} = useSelector((state:RootState)=>state.user)
-const {subTotal,finalTotal,deliveryfee} = useSelector((state:RootState)=>state.cart)
+const {subTotal,finalTotal,deliveryfee,cartData} = useSelector((state:RootState)=>state.cart)
 
 
 const [address,setAddress] = useState({
@@ -40,6 +43,9 @@ const [position,setPosition] = useState<[number,number] | null>(null)
 const [searchloading ,setsearchloading] = useState(false)
 const [paymentMethod,setPaymentMethod] = useState<'cod' | 'online'>('cod')
 const [fixedPosLoading,setFixedPosLoading] = useState(false)
+const [placeOrderLoading,setPlaceOrderLoading] = useState(false)
+const [orderPlaced, setOrderPlaced] = useState(false);
+
 
 useEffect(()=>{
   if(navigator.geolocation){
@@ -131,6 +137,57 @@ useEffect(() => {
 
   return () => clearTimeout(timer)
 }, [])
+
+const handleCod = async ()=>{
+  if(!position){
+    return null
+  }
+  setPlaceOrderLoading(true)
+  try {
+    let result = await axios.post("/api/user/order",{
+      userId:userData?._id,
+      items:cartData.map(item=>({
+        grocery:item._id,
+        name:item.name,
+        price:item.price,
+        quantity:item.quantity,
+        image:item.image,
+
+      })),
+      totalAmount:finalTotal,
+      address:{
+        fullName:address.fullName,
+        mobile:address.mobile,
+        city:address.city,
+        pincode:address.pincode,
+        fullAddress:address.fullAddress,
+        latitude:position[0],
+        longitude:position[1]
+
+      },
+      paymentMethod
+    })
+    setOrderPlaced(true)
+setPlaceOrderLoading(false)
+dispatch(clearCart())
+router.push('/user/order-success')
+    console.log(result.data)
+  } catch (error) {
+    console.log(error)
+    setPlaceOrderLoading(false)
+  }
+}
+
+ 
+useEffect(() => {
+  if (cartData.length === 0 && !orderPlaced) {
+    router.replace("/");
+  }
+}, [cartData, orderPlaced, router]);
+
+if (cartData.length === 0 && !orderPlaced) return null;
+
+
   return (
     <div className="w-[92%] md:w-[80%] mx-auto py-10 relative">
 
@@ -261,8 +318,21 @@ useEffect(() => {
                 </div>
                
               </div>
-              <motion.button whileTap={{scale:0.93}} className=' w-full mt-6 bg-green-600 text-white py-3 rounded-full hover:bg-green-700 transition-all font-semibold cursor-pointer'>
-                        {paymentMethod === 'cod' ? "Place Order" : 'Pay & Place Order'}
+              <motion.button whileTap={{scale:0.93}} className=' w-full mt-6 bg-green-600 text-white py-3 rounded-full hover:bg-green-700 transition-all font-semibold cursor-pointer'
+              onClick={()=>{
+                if(paymentMethod == 'cod'){
+                  handleCod()
+                }else{
+                  null
+                }
+
+              }}
+              >
+                {
+                  placeOrderLoading ?( <Loader2 className='animate-spin flex justify-center   w-full'/>)
+                  :( paymentMethod === 'cod' ? "Place Order" : 'Pay & Place Order')
+                }
+                       
               </motion.button>
             </motion.div>
       </div>
