@@ -3,18 +3,20 @@
 import { useEffect } from "react"
 import axios from "axios"
 import { useDispatch } from "react-redux"
-import { setUserData, clearUser } from "@/redux/userSlice"
+import { setUserData } from "@/redux/userSlice"
 
-function useGetMe() {
+
+async function useGetMe() {
   const dispatch = useDispatch()
 
   useEffect(() => {
     const getMe = async () => {
       try {
         const res = await axios.get("/api/me")
+        console.log(res)
         dispatch(setUserData(res.data))
       } catch (error) {
-        dispatch(clearUser()) // 👈 important
+       console.log(error)
       }
     }
 
