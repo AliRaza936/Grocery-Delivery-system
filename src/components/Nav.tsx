@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
@@ -25,8 +26,12 @@ function Nav({ user }: { user: IUser }) {
   const [searchBarOpen, setSearchBarOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);  
   const {cartData} = useSelector((state:RootState)=>state?.cart)
- 
+ const searchBarRef = React.useRef<HTMLDivElement>(null);
+const pathname = usePathname();
 
+useEffect(() => {
+  setSearchBarOpen(false);
+}, [pathname]);
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -35,12 +40,21 @@ function Nav({ user }: { user: IUser }) {
       ) {
         setOpen(false);
       }
+        if (
+      searchBarRef.current &&
+      !searchBarRef.current.contains(event.target as Node)
+    ) {
+      setSearchBarOpen(false);
     }
+      
+    }
+    
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
 
   let sideBar = menuOpen ? createPortal(
     <AnimatePresence>
@@ -299,6 +313,7 @@ onClick={async()=>await signOut({callbackUrl:"/"})}
                   y: -10,
                   scale: 0.9,
                 }}
+                ref={searchBarRef}
                 className="fixed top-24 left-1/2 -translate-x-1/2 w-[90%] bg-white rounded-full px-4 py-2 shadow-lg flex items-center z-40"
               >
                 <Search className="text-gray-500 w-5 h-5 mr-2" />

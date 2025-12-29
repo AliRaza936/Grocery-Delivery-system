@@ -1,28 +1,25 @@
 "use client"
-import { AppDispatch } from '@/redux/store'
-import { setUserData } from '@/redux/userSlice'
-import axios from 'axios'
-import { useEffect } from 'react'
 
-import {useDispatch} from 'react-redux'
+import { useEffect } from "react"
+import axios from "axios"
+import { useDispatch } from "react-redux"
+import { setUserData, clearUser } from "@/redux/userSlice"
 
 function useGetMe() {
-    const dispatch = useDispatch<AppDispatch>()
-    useEffect(()=>{
-        const getMe = async()=>{
-            try {
-                const result = await axios.get("/api/me")
-            
-     
-                dispatch(setUserData(result?.data))
+  const dispatch = useDispatch()
 
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        getMe()
-    },[])
+  useEffect(() => {
+    const getMe = async () => {
+      try {
+        const res = await axios.get("/api/me")
+        dispatch(setUserData(res.data))
+      } catch (error) {
+        dispatch(clearUser()) // 👈 important
+      }
+    }
+
+    getMe()
+  }, [dispatch])
 }
-  
 
 export default useGetMe

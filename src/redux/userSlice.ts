@@ -13,10 +13,12 @@ interface IUser{
 }
 interface IUserSlice{
     userData: IUser | null
+    loading: boolean
 
 }
 const initialState:IUserSlice ={
-    userData:null
+    userData:null,
+     loading: true,
 }
 
 const userSlice = createSlice({
@@ -25,9 +27,14 @@ const userSlice = createSlice({
     reducers:{
         setUserData:(state,action)=>{
             state.userData=action.payload
-        }
+             state.loading = false
+        },
+         clearUser: (state) => {
+      state.userData = null
+      state.loading = false
+    }
     }
 })
 
-export const {setUserData} = userSlice.actions
+export const {setUserData,clearUser} = userSlice.actions
 export default userSlice.reducer
