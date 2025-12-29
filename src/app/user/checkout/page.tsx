@@ -152,6 +152,7 @@ const handleCod = async ()=>{
         price:item.price,
         quantity:item.quantity,
         image:item.image,
+        unit:item.unit
 
       })),
       totalAmount:finalTotal,

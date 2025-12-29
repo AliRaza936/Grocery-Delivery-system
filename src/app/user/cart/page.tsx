@@ -70,7 +70,7 @@ function CartPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* CART ITEMS */}
+      
           <div className="lg:col-span-2 space-y-5">
             <AnimatePresence>
               {cartData.map((item ,i)=> (
@@ -116,8 +116,8 @@ function CartPage() {
             </AnimatePresence>
           </div>
 
-          {/* SUMMARY */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-24">
+  
+          <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-24 h-fit">
             <h2 className='text-lg sm:text-xl font-bold text-gray-800 mb-4 '>Order Summary</h2>
               <div className='space-y-3 text-gray-700 text-sm sm:text-base'>
                 <div className='flex justify-between'>
@@ -136,7 +136,7 @@ function CartPage() {
                 </div>
               </div>
 
-            {/* 🔔 BUDGET WARNINGS */}
+        
             {budget && percentUsed >= 80 && percentUsed < 100 && (
               <div className="mt-4 bg-orange-100 text-orange-700 text-sm px-4 py-3 rounded-xl">
                 ⚠️ You have used {percentUsed.toFixed(0)}% of your
@@ -151,7 +151,7 @@ function CartPage() {
               </div>
             )}
 
-            {/* CHECKOUT BUTTON */}
+
             <motion.button
               whileTap={{ scale: 0.95 }}
               className={`w-full mt-6 py-3 rounded-full font-semibold cursor-pointer
@@ -177,7 +177,6 @@ function CartPage() {
         </div>
       )}
 
-      {/* 🔴 CONFIRM MODAL */}
       <AnimatePresence>
         {showConfirm && (
           <motion.div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
