@@ -1,9 +1,11 @@
 import { auth } from "@/auth";
+import dbConnect from "@/config/db";
 import User from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req:NextRequest){
     try {
+        await dbConnect()
         const session = await auth()
         if(!session || !session.user){
                 return NextResponse.json({message:"user is not authenticated"},{status:400})
