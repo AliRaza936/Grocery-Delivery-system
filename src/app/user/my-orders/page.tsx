@@ -14,7 +14,7 @@ const [loading,setLoading] = useState(true)
     try {
       const result = await axios.get("/api/user/my-orders")
       setOrders(result?.data?.orders)
-     console.log(result.data)
+
       setLoading(false)
     } catch (error) {
       console.log(error)
@@ -62,7 +62,7 @@ const [loading,setLoading] = useState(true)
           ):
            <div className='mt-4 space-y-6'>
               {
-                orders?.map((order,i)=>(
+                orders?.slice(0)?.reverse()?.map((order,i)=>(
                   <motion.div
                   key={i}
                   initial={{opacity:0,y:20}}
