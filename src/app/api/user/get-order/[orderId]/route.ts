@@ -1,22 +1,29 @@
 import dbConnect from "@/config/db";
 import Order from "@/models/order.model";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET({params}:{params:{orderId:string}}) {
-    try {
-        await dbConnect()
-        const orderId =  params
-        const order = await Order.findById(orderId).populate({
-            path:'assignedDeliveryBoy',
+export async function GET(
+  req: NextRequest,
+  context: { params: { orderId: string } }
+): Promise<NextResponse> {
+  try {
+    await dbConnect();
 
-        })
-            if(!order){
-                return NextResponse.json({message:'order not found'},{status:400})
-            }
-                return NextResponse.json(order,{status:200})
+    const { orderId } = await context.params;
 
-    } catch (error) {
-                return NextResponse.json({message:`order fetching error ${error}`},{status:500})
-        
+    const order = await Order.findById(orderId).populate({
+      path: "assignedDeliveryBoy",
+    });
+
+    if (!order) {
+      return NextResponse.json({ message: "order not found" }, { status: 400 });
     }
+
+    return NextResponse.json(order, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { message: `order fetching error ${error}` },
+      { status: 500 }
+    );
+  }
 }

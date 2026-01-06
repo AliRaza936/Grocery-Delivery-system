@@ -5,11 +5,14 @@ import Order from "@/models/order.model";
 import User from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req:NextRequest,{params}:{params:{orderid:string}}) {
+export async function POST(
+  req: NextRequest,
+  context: { params: { orderid: string } }
+): Promise<NextResponse> {
     try {
         await dbConnect()
-        const {orderid} =  params
-        console.log(orderid)
+        const {orderid} = await context.params
+        console.log('nasbdjasbd',orderid)
         const {status} =await req.json()
         console.log(status)
         const order = await Order.findById(orderid).populate({
@@ -23,7 +26,7 @@ export async function POST(req:NextRequest,{params}:{params:{orderid:string}}) {
         let deliveryBoyPayload:any=[]
         
         if(status ==='out of delivery' && !order.assignment){
-            const {latitude,longitude} =await order.address
+            const {latitude,longitude} = order.address
             const nearByDeliveryBoy = await User.find({
                 role:"deliveryBoy",
                 location:{
