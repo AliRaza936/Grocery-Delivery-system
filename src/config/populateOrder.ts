@@ -27,7 +27,7 @@ export interface IOrderPopulated {
     longitude: number;
   };
   assignment?: mongoose.Types.ObjectId;
-  assignedDeliveryBoy?: IUser; // populated delivery boy
+  assignedDeliveryBoy?: IUser; 
   status: "pending" | "out of delivery" | "delivered";
   createdAt?: Date;
   updatedAt?: Date;

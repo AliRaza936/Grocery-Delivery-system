@@ -1,4 +1,4 @@
-
+'use client'
 import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { ChevronDown, ChevronUp, CreditCard, MapPin, Package, Phone, Truck, User, UserCheck } from "lucide-react";

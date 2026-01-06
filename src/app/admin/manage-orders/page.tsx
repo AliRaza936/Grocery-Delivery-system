@@ -1,3 +1,4 @@
+'use client'
 import AdminOrderCard from "@/components/AdminOrderCard";
 import { IOrderPopulated } from "@/config/populateOrder";
 import { getSocket } from "@/config/socket";
@@ -14,7 +15,7 @@ function ManageOrders() {
   const getOrders = async () => {
     try {
       const result = await axios.get("/api/admin/get-orders");
-      setOrders(result.data); // TS knows this is IOrderPopulated[]
+      setOrders(result.data);
     } catch (error) {
       console.log(error);
     }
