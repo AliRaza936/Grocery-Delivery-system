@@ -19,8 +19,12 @@ const router = useRouter()
     setLoading(true)
     try {
       const result = await axios.post("/api/auth/register",{name,email,password})
-     router.push('/login')
-      setLoading(false)
+      console.log(result)
+      if(result.data.success == true){
+
+        router.push('/login')
+        setLoading(false)
+      }
     } catch (error) {
       console.log(error)
       setLoading(false)

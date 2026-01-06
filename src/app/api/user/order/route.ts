@@ -1,4 +1,5 @@
 import dbConnect from "@/config/db";
+import emitEventHandler from "@/config/emitEventHandler";
 import Order from "@/models/order.model";
 import User from "@/models/user.model";
 import { NextRequest, NextResponse } from "next/server";
@@ -22,6 +23,9 @@ export async function POST(req:NextRequest) {
             totalAmount,
             address
         })
+
+        await emitEventHandler('new-order',newOrder)
+        
             return NextResponse.json({success:true,message:'Order created successfully',newOrder},{status:201})
 
     } catch (error) {

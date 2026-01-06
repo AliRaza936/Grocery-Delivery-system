@@ -32,13 +32,16 @@ function Login() {
     e.preventDefault()
     setLoading(true)
     try {
-        await signIn('credentials',{
+        let result = await signIn('credentials',{
           email,
           password,
            redirect: false,   
         })
-    
-        router.push('/')
+    console.log(result)
+    if(!result.error){
+       router.push('/')
+    }
+      
         setLoading(false)
     } catch (error) {
         console.log(error)

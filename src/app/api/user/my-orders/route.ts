@@ -8,9 +8,9 @@ export async function GET(req:NextRequest) {
         await dbConnect()
         const session = await auth()
         const orders  =  await Order.find({user:session?.user?.id}).populate({
-            path:'user',
+            path:'user assignedDeliveryBoy',
             select:'-password'
-        })
+        }).sort({createdAt:-1})
         if(!orders){
             return NextResponse.json({success:false,message:"orders not found"},{status:400})
         }

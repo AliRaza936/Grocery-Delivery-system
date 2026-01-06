@@ -62,7 +62,7 @@ const [loading,setLoading] = useState(true)
           ):
            <div className='mt-4 space-y-6'>
               {
-                orders?.slice(0)?.reverse()?.map((order,i)=>(
+                orders?.map((order,i)=>(
                   <motion.div
                   key={i}
                   initial={{opacity:0,y:20}}
