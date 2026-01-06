@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req:NextRequest,{params}:{params:{orderid:string}}) {
     try {
         await dbConnect()
-        const {orderid} = await params
+        const {orderid} =  params
         console.log(orderid)
         const {status} =await req.json()
         console.log(status)

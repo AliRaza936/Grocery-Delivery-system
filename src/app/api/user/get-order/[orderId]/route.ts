@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function GET({params}:{params:{orderId:string}}) {
     try {
         await dbConnect()
-        const orderId = await params
+        const orderId =  params
         const order = await Order.findById(orderId).populate({
             path:'assignedDeliveryBoy',
 
