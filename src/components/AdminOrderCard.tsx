@@ -6,6 +6,7 @@ import Image from "next/image";
 import axios from "axios";
 import mongoose from "mongoose";
 import { IUser } from "@/models/user.model";
+import { IOrderPopulated } from "@/config/populateOrder";
 interface IOrder {
   _id?: mongoose.Types.ObjectId;
   user: mongoose.Types.ObjectId;
@@ -38,7 +39,7 @@ interface IOrder {
   updatedAt?: Date;
 }
 
-function AdminOrderCard({ order }: { order: IOrder }) {
+function AdminOrderCard({ order }: { order: IOrderPopulated }) {
     const statusOptions = ['pending','out of delivery' ]
          const [expanded, setExpended] = useState(false);
           const [status,setStatus] = useState<string>(order.status)
@@ -56,7 +57,7 @@ function AdminOrderCard({ order }: { order: IOrder }) {
 }, [order.status])
   return (
     <motion.div
-      key={order._id?.toString()}
+      
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}

@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import {motion} from 'motion/react'
 import MyOrderCard from '@/components/MyOrderCard'
+import { IOrderPopulated } from '@/config/populateOrder'
 function MyOrder() {
 const router =  useRouter()
-const [orders,setOrders] = useState<IOrder[]>()
+const [orders,setOrders] = useState<IOrderPopulated[]>()
 const [loading,setLoading] = useState(true)
   const getMyOrders = async ()=>{
     try {
