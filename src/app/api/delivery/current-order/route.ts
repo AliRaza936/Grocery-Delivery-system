@@ -9,7 +9,6 @@ export async function GET() {
         await dbConnect()
         const session = await auth()
         const deliveryBoyId = session?.user?.id
-        // const  order =  await Order.findOne({assignedDeliveryBoy:deliveryBoyId})
         const activeAssingment = await DeliveryAssignment.findOne({
             assignedTo:deliveryBoyId,
             status:'assigned'
