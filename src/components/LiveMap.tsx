@@ -20,13 +20,7 @@ interface IProp {
   deliveryBoyLocation: Location;
 }
 
-function Recenter({
-  user,
-  delivery,
-}: {
-  user: Location;
-  delivery: Location;
-}) {
+function Recenter({user,  delivery,}: {user: Location;  delivery: Location;}) {
   const map = useMap();
 
   useEffect(() => {

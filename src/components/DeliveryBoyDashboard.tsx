@@ -6,6 +6,8 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import LiveMap from './LiveMap'
+import DeliveryChat from './DeliveryChat'
+import Order from '@/models/order.model'
 
 interface Location{
   latitude:number
@@ -96,16 +98,31 @@ const handleAccept = async (id:string)=>{
 fetchCurrentOrder()
 fetchAssignments()
  },[userData])
+
+ useEffect(()=>{
+  const socket = getSocket()
+  socket.on('update-deliveryboy-location',({userId,location})=>{
+    setDeliveryLocation({
+      latitude:location.coordinates[1],
+      longitude:location.coordinates[0],
+    })
+  })
+  return ()=>{socket.off("update-deliveryboy-location")}
+ },[])
+
+
  if(activeOrder && userLocation){
   return(
     <div className='p-4 pt-[120px] min-h-screen bg-gray-50'>
         <div className='max-w-3xl mx-auto'>
           <h1 className='text-2xl font-bold text-green-700 mb-2'>Active Delivery</h1>
           <p className='text-gray-600 text-sm mb-4'>Order#{activeOrder?.order?._id!.toLocaleString().slice(-6)}</p>
-        </div>
-        <div className='rounded-xl border shadow-lg overflow-hidden border-gray-500 mb-6'>
+          <div className='rounded-xl border shadow-lg overflow-hidden   border-gray-500 mb-6'>
               <LiveMap userLocation={userLocation} deliveryBoyLocation={deliveryLocation}/>
         </div>
+              <DeliveryChat orderId={activeOrder?.order?._id} deliveryBoyId={userData?._id!}/>
+        </div>
+        
     </div>
   )
  }
@@ -114,8 +131,8 @@ fetchAssignments()
       <div className='max-w-3xl mx-auto'>
         <h2 className='text-2xl font-bold mt-[100px] mb-[30px] text-gray-800'>Delivery Assignments</h2>
         {
-          assignments?.map(a=>(
-           <div key={a._id} className='p-5 bg-white rounded-xl shadow mb-4 border border-gray-300'>
+          assignments?.map((a,index)=>(
+           <div key={index} className='p-5 bg-white rounded-xl shadow mb-4 border border-gray-300'>
             <p><b className='text-gray-800'>Order Id </b> #{a?.order?._id.slice(-6)}</p>
             <p className='text-gray-600'>{a.order.address.fullAddress}</p>
 
