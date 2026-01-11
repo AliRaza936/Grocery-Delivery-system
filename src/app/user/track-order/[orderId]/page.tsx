@@ -140,7 +140,7 @@ function TrackOrder() {
     getAllMessages();
   }, []);
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    bottomRef.current?.scrollTo({top:bottomRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
   const getSuggestion = async()=>{
     setLoading(true)
@@ -160,7 +160,7 @@ function TrackOrder() {
         <div className="sticky top-0 bg-white/80 backdrop-blur-xl p-4 border-b border-gray-600 shadow flex gap-3 items-center z-5000">
           <button
             onClick={() => router.back()}
-            className="p-2 bg-green-100 rounded-full"
+            className="p-2 bg-green-100 rounded-full cursor-pointer"
           >
             <ArrowLeft className="text-green-700" size={20} />
           </button>
@@ -208,7 +208,7 @@ function TrackOrder() {
                 </motion.div>
               ))}
             </div>
-            <div className="flex-1 overflow-y-auto  p-2 space-y-3">
+            <div className="flex-1 overflow-y-auto  p-2 space-y-3 " ref={bottomRef} >
               <AnimatePresence>
                 {messages?.map((msg, index) => (
                   <motion.div
@@ -240,7 +240,6 @@ function TrackOrder() {
                   </motion.div>
                 ))}
               </AnimatePresence>
-              <div ref={bottomRef} />
             </div>
 
             <div className="flex gap-2 mt-3 border-t pt-3 border-gray-600">

@@ -61,9 +61,9 @@ try {
 }
 getAllMessages()
     },[]) 
-    useEffect(() => {
-  bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-}, [messages])
+   useEffect(() => {
+     bottomRef.current?.scrollTo({top:bottomRef.current.scrollHeight, behavior: "smooth" });
+   }, [messages]);
 
 const getSuggestion = async()=>{
   setLoading(true)
@@ -77,6 +77,7 @@ const getSuggestion = async()=>{
     setLoading(false)
   }
 }
+
   return (
     <div className='bg-white rounded-3xl shadow-lg border p-4 h-[430px] border-gray-600 flex flex-col'>
 
@@ -100,7 +101,7 @@ const getSuggestion = async()=>{
         </div>
 
 
-      <div className='flex-1 overflow-y-auto  p-2 space-y-3'>
+      <div className='flex-1 overflow-y-auto  p-2 space-y-3' ref={bottomRef} >
       <AnimatePresence>
         {messages?.map((msg,index)=>(
           <motion.div
@@ -125,7 +126,7 @@ const getSuggestion = async()=>{
           </motion.div>
         ))}
       </AnimatePresence>
-        <div ref={bottomRef} />
+
       </div>
 
 
