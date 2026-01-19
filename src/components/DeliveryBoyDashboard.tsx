@@ -75,14 +75,7 @@ function DeliveryBoyDashboard() {
     return ()=>socket.off('new-assignment')
   },[])
 
-const handleAccept = async (id:string)=>{
-  try {
-    let result = await axios.get(`/api/delivery/assignment/${id}/accept-assignment`)
-    console.log(result)
-  } catch (error) {
-    console.log(error)
-  }
-}
+
  const fetchCurrentOrder = async ()=>{
   try {
     const result = await axios.get('/api/delivery/current-order')
@@ -104,7 +97,15 @@ const handleAccept = async (id:string)=>{
 fetchCurrentOrder()
 fetchAssignments()
  },[userData])
-
+const handleAccept = async (id:string)=>{
+  try {
+    let result = await axios.get(`/api/delivery/assignment/${id}/accept-assignment`)
+    
+    fetchCurrentOrder()
+  } catch (error) {
+    console.log(error)
+  }
+}
  useEffect(()=>{
   const socket = getSocket()
   socket.on('update-deliveryboy-location',({userId,location})=>{
@@ -133,9 +134,10 @@ const verifyOtp = async()=>{
   setVerifyOtpLoading(true)
   try {
     const result = await axios.post("/api/delivery/otp/verify",{orderId:activeOrder.order._id,otp})
-    console.log(result.data)
+
    setActiveOrder(null)
   setVerifyOtpLoading(false)
+      setassignments([])
   await fetchCurrentOrder()
 
   } catch (error) {

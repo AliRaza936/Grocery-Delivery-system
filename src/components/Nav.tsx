@@ -172,7 +172,7 @@ onClick={async()=>await signOut({callbackUrl:"/"})}
           </Link>
 
         </div>
-        <div className="md:hidden bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md" onClick={()=>setMenuOpen(pre=>!pre)}>
+        <div className="md:hidden cursor-pointer bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-md" onClick={()=>setMenuOpen(pre=>!pre)}>
           <Menu className="text-green-600 w-6 h-6"/>
         </div>
 

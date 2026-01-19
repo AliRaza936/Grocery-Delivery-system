@@ -25,12 +25,21 @@ function ManageOrders() {
     getOrders();
   }, []);
 
-  useEffect(():any => {
+  useEffect(() => {
     const socket = getSocket();
     socket?.on("new-order", (newOrder: IOrderPopulated) => {
       setOrders((prev) => [newOrder, ...prev]);
     });
-    return () => socket?.off("new-order");
+    socket.on('order-assinged',({orderId,assignedDeliveryBoy})=>(
+       setOrders((prev)=>prev?.map((o)=>(
+        o._id == orderId ? {...o,assignedDeliveryBoy}:o
+      )))
+    ))
+    
+    return () =>{ 
+      socket.off("new-order")
+      socket.off("order-assinged")
+    };
   }, []);
 
   return (

@@ -88,7 +88,7 @@ const router = useRouter()
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span
+          {status !== 'delivered' &&<span
             className={`px-3  py-1 text-xs font-semibold rounded-full border
                 ${
                   order?.paymentMethod != "cod"
@@ -98,7 +98,8 @@ const router = useRouter()
                 `}
           >
             {order?.paymentMethod == "cod" ? "Unpaid" : "Paid"}
-          </span>
+          </span>}
+          
           <span
             className={`px-3 py-1 text-xs font-semibold border rounded-full ${getStatusColor(
               status
@@ -122,7 +123,9 @@ const router = useRouter()
             Online Payment
           </div>
         )}
-    {order?.assignedDeliveryBoy && <> <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center justify-between">
+        {status != 'delivered'&&
+        <div>
+            {order?.assignedDeliveryBoy && <> <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center justify-between">
                               <div className="flex items-center gap-3 text-sm text-gray-700 ">
                                 <UserCheck className="text-blue-600" size={18}/>
                                 <div className="font-semibold text-gray-600">
@@ -132,8 +135,11 @@ const router = useRouter()
                               </div>
                               <a href={`tel:${order.assignedDeliveryBoy.mobile}`} className="bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-blue-700 transition">Call</a>
                               </div>
-                               <button onClick={()=>router.push(`/user/track-order/${order._id?.toString()}`)} className="w-full flex items-center justify-center gap-2 bg-green-600 text-white font-semibold px-4 py-2 rounded-xl shadow hover:bg-green-700 transition cursor-pointer"><Truck size={18}/> Track Your Order</button>
+                               <button onClick={()=>router.push(`/user/track-order/${order._id?.toString()}`)} className="w-full flex mt-2 items-center justify-center gap-2 bg-green-600 text-white font-semibold px-4 py-2 rounded-xl shadow hover:bg-green-700 transition cursor-pointer"><Truck size={18}/> Track Your Order</button>
                               </>}
+        </div>
+        }
+  
 
              
 

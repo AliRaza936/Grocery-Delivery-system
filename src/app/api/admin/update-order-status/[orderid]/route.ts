@@ -9,9 +9,9 @@ export async function POST(req:NextRequest,context:{params:Promise<{orderid:stri
     try {
         await dbConnect()
         const {orderid} = await context.params
-        console.log(orderid)
+
         const {status} =await req.json()
-        console.log(status)
+
         const order = await Order.findById(orderid).populate({
             path:'user',
             select:"-password"

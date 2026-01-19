@@ -1,4 +1,5 @@
 import dbConnect from "@/config/db";
+import emitEventHandler from "@/config/emitEventHandler";
 import DeliveryAssignment from "@/models/deliveryAssignment.model";
 
 import Order from "@/models/order.model";
@@ -8,7 +9,7 @@ export async function POST(req:NextRequest) {
     try {
         await dbConnect()
         const {orderId,otp} = await req.json()
-        console.log(orderId,otp)
+ 
         if(!orderId || !otp){
             return NextResponse.json({message:'OrderId or otp not found'},{status:400})
         }
@@ -27,6 +28,8 @@ export async function POST(req:NextRequest) {
                 order.deliveryOtpVerification = true
                 order.deliveredAt = new Date()
                 await order.save()
+                                await emitEventHandler('order-status-update',{orderId:order._id,status:order.status})
+                
 
                 await DeliveryAssignment.updateOne(
                     {order:orderId},

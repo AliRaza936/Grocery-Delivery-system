@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react'
 import {motion} from 'motion/react'
 import MyOrderCard from '@/components/MyOrderCard'
 import { IOrderPopulated } from '@/config/populateOrder'
+import { getSocket } from '@/config/socket'
 function MyOrder() {
 const router =  useRouter()
 const [orders,setOrders] = useState<IOrderPopulated[]>()
@@ -24,6 +25,17 @@ const [loading,setLoading] = useState(true)
   useEffect(()=>{
     getMyOrders()
   },[])
+
+  useEffect(()=>{
+    const socket = getSocket()
+    socket.on('order-assinged',({orderId,assignedDeliveryBoy})=>{
+      setOrders((prev)=>prev?.map((o)=>(
+        o._id == orderId ? {...o,assignedDeliveryBoy}:o
+      )))
+    })
+    return ()=> {socket.off('order-assinged')}
+  },[])
+
  if (loading) {
   return (
     <div className="min-h-[70vh] flex flex-col items-center justify-center text-center">

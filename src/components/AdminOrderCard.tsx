@@ -7,6 +7,7 @@ import axios from "axios";
 import mongoose from "mongoose";
 import { IUser } from "@/models/user.model";
 import { IOrderPopulated } from "@/config/populateOrder";
+import { getSocket } from "@/config/socket";
 interface IOrder {
   _id?: mongoose.Types.ObjectId;
   user: mongoose.Types.ObjectId;
@@ -55,6 +56,15 @@ function AdminOrderCard({ order }: { order: IOrderPopulated }) {
          useEffect(() => {
   setStatus(order.status)
 }, [order.status])
+useEffect(():any=>{
+    const socket = getSocket()
+    socket.on('order-status-update',(data)=>{
+      if(data.orderId == order._id){
+        setStatus(data.status)
+      }
+    })
+    return ()=>socket.off('order-status-update')
+  },[])
   return (
     <motion.div
       
@@ -69,7 +79,7 @@ function AdminOrderCard({ order }: { order: IOrderPopulated }) {
             <Package size={20} />
             Order #{order._id?.toString().slice(-6)}
           </p>
-          <span
+          {status !== "delivered" &&   <span
             className={`inline-block text-xs font-semibold px-3 py-1 rounded-full border ${
               order.paymentMethod == "cod"
                 ? "bg-red-100 text-red-700 border-red-300"
@@ -77,7 +87,8 @@ function AdminOrderCard({ order }: { order: IOrderPopulated }) {
             }`}
           >
             {order.paymentMethod == "cod" ? "Unpaid" : "Paid"}
-          </span>
+          </span>}
+        
 
           <p>{new Date(order?.createdAt!).toLocaleString()}</p>
           <div className="mt-3 space-y-1 text-gray-700 text-sm">
@@ -133,7 +144,8 @@ function AdminOrderCard({ order }: { order: IOrderPopulated }) {
           >
             {status}
           </span>
-         <select
+          {status !== 'delivered'&&
+          <select
   className="border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium
              bg-white text-gray-700 shadow-sm
              hover:border-green-500
@@ -148,6 +160,8 @@ function AdminOrderCard({ order }: { order: IOrderPopulated }) {
     </option>
   ))}
 </select>
+          }
+         
         </div>
       </div>
           <div className="border-t border-gray-200 mt-3 pt-3">
@@ -200,7 +214,7 @@ function AdminOrderCard({ order }: { order: IOrderPopulated }) {
              <div className="border-t border-gray-500 pt-3 mt-3 flex justify-between items-center text-sm font-semibold text-gray-800">
                                 <div className="flex items-center gap-2 text-gray-700 text-sm">
                                     <Truck className="text-green-600"/>
-                                    <span>Delivery: <span className="text-green-700 font-bold">{order?.status}</span> </span>
+                                    <span>Delivery: <span className="text-green-700 font-bold">{status}</span> </span>
                                 </div>
                                 <div>
                                     Total: <span className="text-green-700 font-bold">Rs.{order?.totalAmount}</span>

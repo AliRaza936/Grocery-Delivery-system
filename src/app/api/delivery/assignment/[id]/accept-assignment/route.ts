@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import dbConnect from "@/config/db";
+import emitEventHandler from "@/config/emitEventHandler";
 import DeliveryAssignment from "@/models/deliveryAssignment.model";
 import Order from "@/models/order.model";
 import { NextRequest, NextResponse } from "next/server";
@@ -45,6 +46,9 @@ export async function GET(req:NextRequest,context:{params:Promise<{id:string}>})
 
         await order.save()
         
+await order.populate('assignedDeliveryBoy')
+        await emitEventHandler('order-assinged',{orderId:order._id,assignedDeliveryBoy:order.assignedDeliveryBoy})
+
         await DeliveryAssignment.updateMany({_id:{$ne:assignment._id},
         broadcastedTo:deliveryBoyId,
         status:'brodcasted'
