@@ -8,3 +8,13 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+.recharts-wrapper svg {
+  outline: none !important;
+  border: none !important;
+} 
+@layer base {
+  .recharts-wrapper svg {
+    outline: none !important;
+    border: none !important;
+  }
+}
