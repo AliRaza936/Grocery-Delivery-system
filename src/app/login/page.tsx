@@ -109,7 +109,7 @@ function Login() {
         
       </div>
 
-      <div className='w-full flex items-center justify-center gap-3 border border-gray-300 hover:border-gray-100 py-3 rounded-xl text-gray-700 font-medium transition-all duration-200 cursor-pointer' onClick={()=>signIn('google',{callbackUrl:'/'})}>
+      <div className='w-full flex items-center justify-center gap-3 border border-gray-300 hover:border-gray-100 py-3 rounded-xl text-gray-700 font-medium transition-all duration-200 md:cursor-pointer' onClick={()=>signIn('google',{callbackUrl:'/'})}>
         <Image src={googleImage} alt='google' width={20} height={20}/>
         Continue with Google
       </div>
