@@ -1,8 +1,5 @@
 @import "tailwindcss";
 
-body{
-  outline:none;
-}
 .scrollbar-hide::-webkit-scrollbar{
     display: none;
 }
@@ -20,4 +17,7 @@ body{
     outline: none !important;
     border: none !important;
   }
+}
+.recharts-wrapper *:focus {
+  outline: none !important;
 }
