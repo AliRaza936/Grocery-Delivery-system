@@ -21,3 +21,21 @@
 .recharts-wrapper *:focus {
   outline: none !important;
 }
+
+.thin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #22c55e;
+  border-radius: 9999px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #8cb099 transparent;
+}
