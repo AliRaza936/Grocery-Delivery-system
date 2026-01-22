@@ -107,7 +107,8 @@ useEffect(() => {
         <h1 className='text-2xl md:text-3xl font-extrabold text-green-700 flex items-center justify-center gap-2'><Package size={28}/>Manage Groceries</h1>
       </motion.div>
 
-      <motion.form
+        <form>
+      <motion.div
        initial={{opacity:0,y:10}}
       animate={{opacity:1,y:0}}
       transition={{duration:0.4}}
@@ -116,7 +117,8 @@ useEffect(() => {
         <Search className='text-gray-500 w-5 h-5 mr-2'/>
         <input type="text" className='w-full outline-none text-gray-700 placeholder-gray-400 ' placeholder='Search by name or category...'/>
 
-      </motion.form>
+      </motion.div>
+      </form>
 
     <div className='space-y-4 '>
         {groceries?.map((g,i)=>(
