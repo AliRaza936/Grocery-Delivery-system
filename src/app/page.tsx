@@ -1,19 +1,26 @@
 import { auth } from "@/auth";
 import AdminDashboard from "@/components/AdminDashboard";
-import DeliveryBoyDashboard from "@/components/DeliveryBoyDashboard";
+import DeliveryBoy from "@/components/DeliveryBoy";
+
 import EditRoleMobile from "@/components/EditRoleMobile";
+import Footer from "@/components/Footer";
 import GeoUpdater from "@/components/GeoUpdater";
 import HomeWrapper from "@/components/HomeWrapper";
 import Nav from "@/components/Nav";
 import UserDashboard from "@/components/UserDashboard";
 import Welcome from "@/components/Welcome";
 import dbConnect from "@/config/db";
+import Grocery, { IGrocery } from "@/models/grocery.model";
 import User from "@/models/user.model";
-import { redirect } from "next/navigation";
-import React from "react";
 
-const Home = async () => {
+const Home = async (props:{
+  searchParams:Promise<{
+    q:string
+  }>
+}) => {
   await dbConnect();
+  const searchParams = await props.searchParams
+
   let session = await auth();
   const user = await User.findById(session?.user?.id);
 
@@ -27,19 +34,31 @@ const Home = async () => {
 
   const plainUser = JSON.parse(JSON.stringify(user));
 
+let groceryList:IGrocery[] = []
+if(searchParams.q){
+  groceryList = await Grocery.find({
+    $or:[
+      {name:{$regex:searchParams?.q || '',$options:"i"}},
+      {category:{$regex:searchParams?.q || '' , $options:"i"}}
+    ]
+  })
+}else{
+  groceryList = await Grocery.find({})
+}
   return (
     <>
       <HomeWrapper user={plainUser} />
       {plainUser &&  <GeoUpdater userId={plainUser._id}/>}
     
       {user?.role == "deliveryBoy" ? (
-        <DeliveryBoyDashboard />
+        <DeliveryBoy />
         
       ) : user?.role == "admin" ? (
         <AdminDashboard />
       ) : (
-        <UserDashboard />
+        <UserDashboard groceriesList={groceryList}/>
       )}
+      <Footer user={plainUser}/>
     </>
   );
 };

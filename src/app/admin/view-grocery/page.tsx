@@ -12,6 +12,8 @@ function ViewGrocery() {
     const [editing,setEditing] = useState<IGrocery | null>()
     const [previewImage,setPreviewImage] = useState<string|null>(null)
     const [backendImage,setBackendImage] = useState<Blob | null>(null)
+    const [search,setSearch] = useState<string>("")
+    const [filterd,setFiltered] = useState<IGrocery[]>()
   const categories =[
             "Fruits & Vegetables",
             "Dairy & Eggs",
@@ -29,6 +31,7 @@ function ViewGrocery() {
         try {
             let result = await axios.get("/api/admin/get-groceries")
             setGroceries(result.data)
+            setFiltered(result.data)
             console.log(result)
         } catch (error) {
             console.log(error)
@@ -95,6 +98,26 @@ useEffect(() => {
             console.log(error)
         }
     }
+    useEffect(() => {
+  const timeout = setTimeout(() => {
+    
+    if (!search.trim()) {
+      setFiltered(groceries)
+      return
+    }
+
+    const q = search.toLowerCase()
+
+    const filteredData = groceries?.filter(
+      (g) =>
+        g.name.toLowerCase().includes(q) ||
+        g.category.toLowerCase().includes(q)
+    )
+
+    setFiltered(filteredData)
+  }, 1000)
+  return () => clearTimeout(timeout)
+}, [search, groceries])
   return (
     <div className='pt-4 w-[95%] md:w-[85%] mx-auto pb-20'>
       <motion.div
@@ -107,7 +130,7 @@ useEffect(() => {
         <h1 className='text-2xl md:text-3xl font-extrabold text-green-700 flex items-center justify-center gap-2'><Package size={28}/>Manage Groceries</h1>
       </motion.div>
 
-        <form>
+
       <motion.div
        initial={{opacity:0,y:10}}
       animate={{opacity:1,y:0}}
@@ -115,20 +138,22 @@ useEffect(() => {
       className='flex items-center bg-white border border-gray-200 rounded-full px-5 py-3 shadow-sm mb-10 hover:shadow-lg transition-all max-w-lg mx-auto w-full'
       >
         <Search className='text-gray-500 w-5 h-5 mr-2'/>
-        <input type="text" className='w-full outline-none text-gray-700 placeholder-gray-400 ' placeholder='Search by name or category...'/>
+        <input type="text" className='w-full outline-none text-gray-700 placeholder-gray-400 ' 
+        placeholder='Search by name or category...' value={search} onChange={(e)=>setSearch(e.target.value)}/>
 
       </motion.div>
-      </form>
 
-    <div className='space-y-4 '>
-        {groceries?.map((g,i)=>(
-            <motion.div
-            key={i}
-            whileHover={{scale:1.01}}
-            transition={{type:"spring",stiffness:100}}
-            className='bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 flex flex-col sm:flex-row items-center sm:items-start gap-5 p-5 transition-all  '
-            >
-                <div className='relative w-full sm:w-44 aspect-square rounded-xl overflow-hidden border border-gray-200'>
+
+    <div className='space-y-4'>
+  {filterd && filterd.length > 0 ? (
+    filterd.map((g, i) => (
+      <motion.div
+        key={g._id?.toString() || i}
+        whileHover={{ scale: 1.01 }}
+        transition={{ type: "spring", stiffness: 100 }}
+        className='bg-white rounded-2xl shadow-md hover:shadow-xl border border-gray-100 flex flex-col sm:flex-row items-center sm:items-start gap-5 p-5 transition-all'
+      >
+        <div className='relative w-full sm:w-44 aspect-square rounded-xl overflow-hidden border border-gray-200'>
                     <Image
                     src={g.image}
                     alt={g.name}
@@ -151,10 +176,21 @@ useEffect(() => {
                             </button>
                         </div>
                 </div>
+      </motion.div>
+    ))
+  ) : (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className='text-center py-16 text-gray-500'
+    >
+      <Package size={48} className='mx-auto mb-3 text-gray-400' />
+      <p className='text-lg font-semibold'>No groceries found</p>
+      <p className='text-sm'>Try a different name or category</p>
+    </motion.div>
+  )}
+</div>
 
-            </motion.div>
-        ))}
-    </div>
 
             <AnimatePresence>
                 {editing && (

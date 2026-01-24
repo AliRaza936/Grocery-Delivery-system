@@ -9,12 +9,13 @@ import LiveMap from './LiveMap'
 import DeliveryChat from './DeliveryChat'
 import Order from '@/models/order.model'
 import { Loader } from 'lucide-react'
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 interface Location{
   latitude:number
   longitude:number
 }
-function DeliveryBoyDashboard() {
+function DeliveryBoyDashboard({earning}:{earning:number}) {
   const [assignments,setassignments]  = useState<any[]>()
   const {userData} = useSelector((state:RootState)=>state.user)
   const [activeOrder,setActiveOrder] =  useState<any>(null)
@@ -138,8 +139,9 @@ const verifyOtp = async()=>{
    setActiveOrder(null)
   setVerifyOtpLoading(false)
       setassignments([])
-  await fetchCurrentOrder()
 
+  await fetchCurrentOrder()
+window.location.reload()
   } catch (error) {
     console.log(error)
     setOtpError("Otp Verification Error")
@@ -148,6 +150,70 @@ const verifyOtp = async()=>{
   }
 }
 
+
+if(!activeOrder && assignments?.length === 0 ){
+  const todayEarning = [
+    {
+      name:'Today',
+      earning,
+      deliveries:earning?earning/120:0
+    }
+  ]
+return(
+  <div className='flex items-center justify-center min-h-screen bg-linear-to-br from-white to-green-50 p-6 pt-28'>
+      <div className='max-w-md w-full text-center'>
+        <h2 className='text-2xl font-bold text-gray-800'>No Active Deliveries 🚛</h2>
+        <p className='text-gray-500 mb-5'>Stay online to receive new orders</p>
+        <div className='bg-white border rounded-xl shadow-xl p-6'>
+          <h2 className='font-medium text-green-700 mb-2'>Today's Performance</h2>
+
+          <ResponsiveContainer width="100%" height={300}>
+  <BarChart
+    data={todayEarning}
+    margin={{ top: 20, right: 20, left: 0, bottom: 0 }}
+    barGap={4}            
+    barCategoryGap="30%"  
+    
+  >
+    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+    <XAxis dataKey="name" tick={{ fill: '#16a34a', fontWeight: 600 }} />
+    <YAxis tick={{ fill: '#16a34a', fontWeight: 500 }} />
+    <Tooltip
+      contentStyle={{ backgroundColor: '#f0fdf4', borderRadius: 8, border: 'none' }}
+      itemStyle={{ fontWeight: 600 }}
+    />
+    <Legend verticalAlign="top" height={36} wrapperStyle={{ fontWeight: 600 }} />
+
+    <Bar
+      dataKey="earning"
+      name="Earnings (Rs)"
+      fill="#16a34a"
+      barSize={40}
+      radius={[10, 10, 0, 0]}
+      label={{ position: 'top', fill: '#16a34a', fontWeight: 600 }}
+    />
+    <Bar
+      dataKey="deliveries"
+      name="Deliveries"
+      fill="#2563eb"
+      barSize={40}
+      radius={[10, 10, 0, 0]}
+      label={{ position: 'top', fill: '#2563eb', fontWeight: 600 }}
+    />
+  </BarChart>
+</ResponsiveContainer>
+
+
+
+
+                  <p className='mt-4 text-lg font-bold text-green-700 '>Rs.{earning || 0} Earned Today</p>
+                  <button onClick={()=>window.location.reload()} className='mt-4 w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg'>Refresh Earning</button>
+        </div>
+      </div>
+
+  </div>
+)
+}
 
  if(activeOrder && userLocation){
   return(
@@ -192,6 +258,7 @@ const verifyOtp = async()=>{
     </div>
   )
  }
+  
   return (
     <div className='w-full min-h-screen bg-gray-50 p-4'>
       <div className='max-w-3xl mx-auto'>

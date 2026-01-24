@@ -57,13 +57,6 @@ React.useEffect(() => {
   const percent = budget ? (subTotal / budget) * 100 : 0;
   const isNearLimit = budget && percent >= 80 && percent < 100;
   const isOverBudget = budget && subTotal > budget;
-
-  // const cardBorder = isOverBudget
-  //   ? "border-red-400"
-  //   : isNearLimit
-  //   ? "border-orange-400"
-  //   : "border-gray-100";
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 50, scale: 0.95 }}
