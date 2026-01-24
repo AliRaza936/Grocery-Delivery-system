@@ -34,7 +34,8 @@ function Footer({ user }: Props) {
             doorstep. Shop smart, eat fresh, and save more every day!
           </p>
         </div>
-        <div>
+        {
+          ( user?.role !== 'deliveryBoy')? <div>
           <h2 className="text-xl font-semibold mb-3">Quick Links</h2>
           <ul className="space-y-2 text-green-100 text-sm">
             <li>
@@ -42,21 +43,48 @@ function Footer({ user }: Props) {
                 Home
               </Link>
             </li>
-            <li>
-              <Link href={"/user/cart"} className="hover:text-white transition">
-                Cart
-              </Link>
-            </li>
-            {user && (
+             {user?.role== 'admin' ? 
               <li>
                 <Link
-                  href={"/user/my-orders"}
+                  href={"/admin/view-grocery"}
                   className="hover:text-white transition"
                 >
-                  My Orders
+                  View Groceries
                 </Link>
               </li>
-            )}
+            :
+                <li>
+                <Link
+                  href={"/user/cart"}
+                  className="hover:text-white transition"
+                >
+                    Cart
+                </Link>
+              </li>
+            
+        }
+            {user?.role === 'admin' ? (
+  <li>
+    <Link
+      href={"/admin/manage-orders"}
+      className="hover:text-white transition"
+    >
+      Manage Orders
+    </Link>
+  </li>
+) : (
+  user && ( 
+    <li>
+      <Link
+        href={"/user/my-orders"}
+        className="hover:text-white transition"
+      >
+        My Orders
+      </Link>
+    </li>
+  )
+)}
+
             {!user && (
               <li>
                 <Link href={"/login"} className="hover:text-white transition">
@@ -66,6 +94,9 @@ function Footer({ user }: Props) {
             )}
           </ul>
         </div>
+        :''
+        }
+       
         <div>
           <h3 className="text-xl font-semibold mb-3 ">Contact Us</h3>
           <ul className="space-y-2  text-green-100 text-sm">
@@ -81,14 +112,14 @@ function Footer({ user }: Props) {
           </ul>
           <div className="flex gap-2 mt-4">
              <Link href="https://www.facebook.com/ali.jutt.364676" target="_blank">
-              <Facebook className="w-5 h-5 text-cyan-600 hover:text-white transition" />
+              <Facebook className="w-5 h-5 text-gray-300 hover:text-white transition" />
             </Link>
             <Link href="https://www.linkedin.com/in/ali-raza-32074833a/" target="_blank">
-              <Linkedin className="w-5 h-5 text-blue-400 hover:text-white transition" />
+              <Linkedin className="w-5 h-5 text-gray-300 hover:text-white transition" />
             </Link>
            
             <Link href="https://github.com/AliRaza936" target="_blank">
-              <Github className="w-5 h-5 text-gray-400 hover:text-white transition" />
+              <Github className="w-5 h-5 text-gray-300 hover:text-white transition" />
             </Link>
 
            

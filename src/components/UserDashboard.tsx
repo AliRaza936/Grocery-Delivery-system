@@ -1,4 +1,4 @@
-import React from 'react'
+
 import HeroSection from './HeroSection'
 import CategoriesSlider from './CategoriesSlider'
 import dbConnect from '@/config/db'
@@ -15,13 +15,8 @@ async function UserDashboard({groceriesList}:{groceriesList:IGrocery[]}) {
      <HeroSection/>
 
         <BudgetTracker
-          
-         
+
         />
-
-        
-
-
      <CategoriesSlider/>
 <div className="w-[90%] md:w-[80%] mx-auto mt-10">
   <h2 className="text-2xl md:text-3xl font-bold text-green-700 mb-6 text-center">
@@ -38,6 +33,7 @@ async function UserDashboard({groceriesList}:{groceriesList:IGrocery[]}) {
     <p className="text-gray-500 mt-2">
       Try searching with a different keyword
     </p>
+      
   </div>
 ) : (
   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
