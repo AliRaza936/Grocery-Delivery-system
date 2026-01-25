@@ -10,6 +10,7 @@ import DeliveryChat from './DeliveryChat'
 import Order from '@/models/order.model'
 import { Loader } from 'lucide-react'
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { subscribeSocketConnection } from '@/config/isSocketConnect'
 
 interface Location{
   latitude:number
@@ -120,6 +121,9 @@ const handleAccept = async (id:string)=>{
 const sendOtp = async()=>{
   setSendOtpLoading(true)
   try {
+    
+      
+    
     const result = await axios.post("/api/delivery/otp/send",{orderId:activeOrder.order._id})
     console.log(result.data)
   setSendOtpLoading(false)
@@ -148,6 +152,18 @@ window.location.reload()
   setVerifyOtpLoading(false)
 
   }
+}
+const [isConnected, setIsConnected] = useState<boolean>(false);
+ useEffect(() => {
+  subscribeSocketConnection(setIsConnected);
+}, []);
+if (!isConnected) {
+  return (
+    <div className="w-full h-screen flex items-center justify-center">
+      <Loader className="animate-spin w-10 h-10 text-green-600" />
+      <p className="ml-2 text-green-700 font-semibold">Connecting...</p>
+    </div>
+  );
 }
 
 

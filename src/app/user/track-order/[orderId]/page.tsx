@@ -29,6 +29,9 @@ interface IOrder {
   };
   assignedDeliveryBoy?: IUser;
   status: "pending" | "out of delivery" | "delivered";
+  deliveryOtp :string | null;
+  deliveryOtpVerification : Boolean;
+  deliveredAt:Date
 }
 
 function TrackOrder() {
@@ -42,6 +45,8 @@ function TrackOrder() {
   const { userData } = useSelector((state: RootState) => state.user);
   const [suggestions,setSuggestions] = useState([])
           const [loading,setLoading] = useState(false)
+          const [deliveryOtp, setDeliveryOtp] = useState<string | null>(
+            order?.deliveryOtp || null)
 
   const [userLocation, setUserLocation] = useState<Location>({
     latitude: 0,
@@ -140,6 +145,30 @@ function TrackOrder() {
     getAllMessages();
   }, []);
   useEffect(() => {
+  const socket = getSocket()
+
+  socket.on("order-status-update", ({ orderId, status }) => {
+    if (orderId === order?._id?.toString()) {
+      setOrder(prev => prev ? { ...prev, status } : prev)
+    }
+  })
+
+  return () =>{ socket.off("order-status-update")}
+}, [order])
+    useEffect(() => {
+    const socket = getSocket()
+  
+    socket.on("order-otp", ({ orderId, otp }) => {
+      if (orderId === order?._id?.toString()!) {
+        setDeliveryOtp(otp)
+      }
+    })
+  
+    return () => {
+      socket.off("order-otp")
+    }
+  }, [order?._id])
+  useEffect(() => {
     bottomRef.current?.scrollTo({top:bottomRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
   const getSuggestion = async()=>{
@@ -154,6 +183,11 @@ function TrackOrder() {
       setLoading(false)
     }
   }
+  useEffect(() => {
+  if(order?.deliveryOtp) {
+    setDeliveryOtp(order.deliveryOtp)
+  }
+}, [order?.deliveryOtp])
   return (
     <div className="w-full min-h-screen bg-linear-to-b from-green-50 to-white">
       <div className="max-w-2xl mx-auto pb-24">
@@ -174,9 +208,17 @@ function TrackOrder() {
               </span>
             </p>
           </div>
+          
         </div>
 
         <div className="px-4 mt-6 space-y-4">
+          {deliveryOtp && order?.status !== "delivered" && (
+  <div className="w-full max-w-2xl mx-auto mt-4 bg-green-50 border border-green-300 rounded-xl p-4 text-center shadow">
+    <p className="text-sm text-green-700 font-medium">Delivery OTP</p>
+    <p className="text-3xl font-bold tracking-widest text-green-800">{deliveryOtp}</p>
+    
+  </div>
+)}
           <div className="rounded-3xl overflow-hidden border border-gray-500  shadow">
             <LiveMap
               userLocation={userLocation}

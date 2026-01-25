@@ -31,4 +31,7 @@ export interface IOrderPopulated {
   status: "pending" | "out of delivery" | "delivered";
   createdAt?: Date;
   updatedAt?: Date;
+  deliveryOtp :string | null;
+  deliveryOtpVerification : Boolean;
+  deliveredAt:Date
 }

@@ -45,6 +45,9 @@ interface IOrder {
 function MyOrderCard({ order }: { order: IOrderPopulated }) {
   const [expanded, setExpended] = useState(false);
   const [status,setStatus] = useState(order.status)
+  const [deliveryOtp, setDeliveryOtp] = useState<string | null>(
+  order.deliveryOtp || null
+)
 const router = useRouter()
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -67,6 +70,20 @@ const router = useRouter()
     })
     return ()=>socket.off('order-status-update')
   },[])
+  useEffect(() => {
+  const socket = getSocket()
+
+  socket.on("order-otp", ({ orderId, otp }) => {
+    if (orderId === order._id?.toString()) {
+      setDeliveryOtp(otp)
+    }
+  })
+
+  return () => {
+    socket.off("order-otp")
+  }
+}, [order._id])
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -140,6 +157,19 @@ const router = useRouter()
         </div>
         }
   
+{deliveryOtp && status !== "delivered" && (
+  <div className="mt-4 bg-green-50 border border-green-300 rounded-xl p-4 text-center">
+    <p className="text-sm text-green-700 font-medium">
+      Delivery OTP
+    </p>
+    <p className="text-3xl font-bold tracking-widest text-green-800">
+      {deliveryOtp}
+    </p>
+    <p className="text-xs text-gray-500 mt-1">
+      Share this OTP with the delivery partner
+    </p>
+  </div>
+)}
 
              
 

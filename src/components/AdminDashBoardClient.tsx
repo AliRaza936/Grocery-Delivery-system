@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { Package, Rss, Truck, Users } from "lucide-react";
+import { Loader, Package, Rss, Truck, Users } from "lucide-react";
 import { p } from "motion/react-client";
 import {
   Bar,
@@ -12,6 +12,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { getSocket } from "@/config/socket";
+import { subscribeSocketConnection } from "@/config/isSocketConnect";
+
 type propType = {
   earning: {
     today: number;
@@ -43,6 +46,7 @@ function AdminDashBoardClient({ earning, stats, chartData }: propType) {
       : filter === "sevenDays"
         ? "Last 7 Days Earning"
         : "Total Earning";
+
 
   return (
     <div className="pt-28 w-[90%] md:w-[80%] mx-auto">

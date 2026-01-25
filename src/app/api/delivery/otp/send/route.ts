@@ -1,4 +1,5 @@
 import dbConnect from "@/config/db";
+import emitEventHandler from "@/config/emitEventHandler";
 import { sendMail } from "@/config/mailer";
 import Order from "@/models/order.model";
 import { NextRequest, NextResponse } from "next/server";
@@ -15,7 +16,12 @@ export async function POST(req:NextRequest) {
             return NextResponse.json({message:"order not found"},{status:400})
         }
         const otp = Math.floor(1000+Math.random()*9000).toString()
+
         order.deliveryOtp = otp
+        await emitEventHandler("order-otp", {
+      orderId: order._id,
+      otp,
+    });
         await order.save()
 
         await sendMail(

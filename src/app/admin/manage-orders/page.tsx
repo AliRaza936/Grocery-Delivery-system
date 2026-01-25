@@ -1,9 +1,10 @@
 'use client'
 import AdminOrderCard from "@/components/AdminOrderCard";
+import { subscribeSocketConnection } from "@/config/isSocketConnect";
 import { IOrderPopulated } from "@/config/populateOrder";
 import { getSocket } from "@/config/socket";
 import axios from "axios";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -41,7 +42,18 @@ function ManageOrders() {
       socket.off("order-assinged")
     };
   }, []);
-
+const [isConnected, setIsConnected] = useState<boolean>(false);
+ useEffect(() => {
+  subscribeSocketConnection(setIsConnected);
+}, []);
+if (!isConnected) {
+  return (
+    <div className="w-full h-screen flex items-center justify-center">
+      <Loader className="animate-spin w-10 h-10 text-green-600" />
+      <p className="ml-2 text-green-700 font-semibold">Connecting...</p>
+    </div>
+  );
+}
   return (
     <div className="min-h-screen bg-gray-50 w-full">
       <div className="fixed top-0 left-0 w-full backdrop-blur-lg bg-white/70 shadow-sm border-b border-gray-500 z-50">
