@@ -4,6 +4,8 @@ import "./globals.css";
 import Provider from "@/Provider";
 import StoreProvider from "@/redux/StoreProvider";
 import InitUser from "@/initUser";
+import {Toaster} from 'react-hot-toast'
+import { CheckCircle, XCircle } from "lucide-react";
 
 
 export const metadata: Metadata = {
@@ -23,6 +25,39 @@ export default function RootLayout({
         <StoreProvider>
           <InitUser/>
         {children}
+         <Toaster
+      position="top-right"
+      reverseOrder={false}
+      toastOptions={{
+        duration: 3000,
+        style: {
+          fontWeight: 500,
+          borderRadius: "12px",
+          padding: "12px 16px",
+          boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+          fontSize: "14px",
+        },
+        success: {
+          icon: <CheckCircle className="w-5 h-5 text-green-500" />,
+          style: {
+            background: "#d1fae5", 
+            color: "#065f46",       
+            border: "1px solid #10b981",
+          },
+        },
+        error: {
+          icon: <XCircle className="w-5 h-5 text-red-500" />,
+          style: {
+            background: "#fee2e2", 
+            color: "#b91c1c",    
+            border: "1px solid #ef4444",
+          },
+        },
+        
+        
+      }}
+    />
+
         </StoreProvider>
         </Provider>
       </body>

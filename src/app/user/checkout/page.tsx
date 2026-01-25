@@ -15,16 +15,15 @@ import axios from 'axios'
 
 import { clearCart } from '@/redux/cartSlice'
 import dynamic from 'next/dynamic'
+import toast from 'react-hot-toast'
 
 const CheckoutMap = dynamic(()=>import("@/components/CheckoutMap"),{ssr:false})
-
-
-
 
 function Checkout() {
   const router = useRouter()
   const dispatch = useDispatch()
-const {userData} = useSelector((state:RootState)=>state.user)
+const {userData,loading} = useSelector((state:RootState)=>state.user)
+console.log(loading)
 const {subTotal,finalTotal,deliveryfee,cartData} = useSelector((state:RootState)=>state.cart)
 
 
@@ -82,8 +81,11 @@ try {
 },[position])
 
 const handleSearchQuery = async()=>{
-  if(!searchQuery){
-    return
+  if(!searchQuery && !position){
+    return toast.error('Please allow location ')
+  }
+  if(!position){
+    return toast.error('Please allow location ')
   }
   setsearchloading(true)
   const {OpenStreetMapProvider}= await import("leaflet-geosearch")
@@ -99,7 +101,7 @@ if(results.length>0){
   }
 }
 const handleCurrentLocation = ()=>{
-
+  
   setFixedPosLoading(true)
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition((pos)=>{
@@ -108,6 +110,7 @@ const handleCurrentLocation = ()=>{
       setFixedPosLoading(false)
     },(err)=>{
       setFixedPosLoading(false)
+      toast.error('Please allow location or something went wrong')
       console.log('location error',err)},{enableHighAccuracy:true,maximumAge:0,timeout:30000
 
       })
@@ -120,11 +123,40 @@ useEffect(() => {
 
   return () => clearTimeout(timer)
 }, [])
-
-const handleCod = async ()=>{
-  if(!position){
-    return null
+const validateCheckout = () => {
+  if (!address.fullName.trim()) {
+    toast.error("Full Name is required");
+    return false;
   }
+  if (!address.mobile.trim()) {
+    toast.error("Phone Number is required");
+    return false;
+  }
+  if (!address.fullAddress.trim()) {
+    toast.error("Full Address is required");
+    return false;
+  }
+  if (!address.city.trim()) {
+    toast.error("City is required");
+    return false;
+  }
+  if (!address.state.trim()) {
+    toast.error("State is required");
+    return false;
+  }
+  if (!address.pincode.trim()) {
+    toast.error("Pincode is required");
+    return false;
+  }
+  if (!position) {
+    toast.error("Please allow location or select your location on map");
+    return false;
+  }
+  return true;
+};
+const handleCod = async ()=>{
+    if (!validateCheckout()) return;
+    if(!position) return null;
   setPlaceOrderLoading(true)
   try {
     let result = await axios.post("/api/user/order",{
@@ -163,6 +195,7 @@ router.push('/user/order-success')
 }
 
  
+
 useEffect(() => {
   if (cartData.length === 0 && !orderPlaced) {
     router.replace("/");
@@ -170,7 +203,42 @@ useEffect(() => {
 }, [cartData, orderPlaced, router]);
 
 if (cartData.length === 0 && !orderPlaced) return null;
+  const [showLoginOverlay, setShowLoginOverlay] = useState(false)
 
+  useEffect(() => {
+    if (!loading && !userData) {
+      setShowLoginOverlay(true)
+    }
+  }, [loading,userData])
+
+  const handleLoginRedirect = () => {
+
+    router.push(`/login?callbackUrl=/user/checkout`)
+  }
+
+  if (!loading && showLoginOverlay ) {
+    return (
+      <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+        <motion.div 
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="bg-white rounded-3xl p-10 w-[90%] max-w-md text-center shadow-2xl"
+        >
+          <User className="mx-auto text-green-600" size={50} />
+          <h2 className="text-2xl font-bold mt-4 mb-2 text-gray-800">You must log in</h2>
+          <p className="text-gray-600 mb-6">To place an order, please log in first.</p>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={handleLoginRedirect}
+            className="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition-all w-full"
+          >
+            Go to Login
+          </motion.button>
+        </motion.div>
+      </div>
+    )
+  }
 
   return (
     <div className="w-[92%] md:w-[80%] mx-auto py-10 relative">
@@ -236,7 +304,7 @@ if (cartData.length === 0 && !orderPlaced) return null;
                   </div>
                   <div className='flex flex-wrap items-center justify-center gap-2 mt-3'>
                     <input type="text" placeholder='Search city or area...' className='flex-1 border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-400 outline-none ' value={searchQuery} onChange={(e)=>setSearchQuery(e.target.value)}/>
-                    <button  className='bg-green-600 text-white px-5 h-[45px] rounded-lg hover:green-700 transition-all font-medium cursor-pointer' onClick={handleSearchQuery}>{searchloading?<Loader2 size={16} className='animate-spin '/>:"Search"}</button>
+                    <button  className='bg-green-600 outline-none text-white px-5 h-[45px] rounded-lg hover:green-700 transition-all font-medium cursor-pointer' onClick={handleSearchQuery}>{searchloading?<Loader2 size={16} className='animate-spin '/>:"Search"}</button>
                   </div>
                   <div className='relative mt-6 h-[330px] rounded-xl overflow-hidden border border-gray-300 shadow-inner'>
                     {
@@ -245,7 +313,7 @@ if (cartData.length === 0 && !orderPlaced) return null;
                     }
                     <motion.button onClick={handleCurrentLocation}
                     whileTap={{scale:0.93}}
-                     className='absolute bottom-4 right-4 bg-green-600 text-white shadow-lg rounded-full p-3 hover:bg-green-700 transition-all flex items-center justify-center z-999 cursor-pointer'>
+                     className='absolute outline-none bottom-4 right-4 bg-green-600 text-white shadow-lg rounded-full p-3 hover:bg-green-700 transition-all flex items-center justify-center z-999 cursor-pointer'>
                       {
                         fixedPosLoading ? <Loader2 className='animate-spin'/> : <LocateFixed/>
                       }

@@ -5,8 +5,11 @@ import { motion } from "motion/react"
 import Image from 'next/image'
 import googleImage from '@/assets/google.png'
 import axios from 'axios'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { signIn, useSession } from 'next-auth/react'
+import toast from 'react-hot-toast'
+import { useDispatch } from 'react-redux'
+import { setUserData } from '@/redux/userSlice'
 
 function Login() {
 
@@ -14,8 +17,11 @@ function Login() {
   const [password,setPassword] = useState("")
   const [showPassword,setShowPassword] = useState(false)
   const [loading,setLoading] = useState(false)
+  const { data: session, status } = useSession()
   let router = useRouter()
-  const session = useSession()
+  const searchParams = useSearchParams()
+const callbackUrl = searchParams.get('callbackUrl') || '/'
+  const dispatch = useDispatch()
 
 
 
@@ -28,26 +34,37 @@ function Login() {
     return true
   }
 
-  let handleLogin = async(e:React.FormEvent)=>{
-    e.preventDefault()
-    setLoading(true)
-    try {
-        let result = await signIn('credentials',{
-          email,
-          password,
-           redirect: false,   
-        })
-    console.log(result)
-    if(!result.error){
-       router.push('/')
-    }
-      
-        setLoading(false)
-    } catch (error) {
-        console.log(error)
-        setLoading(false)
-    }
+ 
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+
+   if (result?.error) {
+  if (result.error === "CredentialsSignin") {
+    toast.error("Incorrect email or password");
+  } else {
+    toast.error("Something went wrong. Please try again");
   }
+} else {
+      toast.success("Login successful!");
+     const res = await axios.get("/api/me")
+        dispatch(setUserData(res.data.user))
+router.push(callbackUrl)
+      router.push(callbackUrl)
+    }
+  } catch (err) {
+    toast.error("Something went wrong. Please try again");
+    console.log(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen px-6 py-10 bg-white relative'>
@@ -109,7 +126,7 @@ function Login() {
         
       </div>
 
-      <div className='w-full flex items-center justify-center gap-3 border border-gray-300 hover:border-gray-100 py-3 rounded-xl text-gray-700 font-medium transition-all duration-200 md:cursor-pointer' onClick={()=>signIn('google',{callbackUrl:'/'})}>
+      <div className='w-full flex items-center justify-center gap-3 border border-gray-300 hover:border-gray-100 py-3 rounded-xl text-gray-700 font-medium transition-all duration-200 md:cursor-pointer' onClick={()=>signIn('google',{callbackUrl:callbackUrl})}>
         <Image src={googleImage} alt='google' width={20} height={20}/>
         Continue with Google
       </div>

@@ -19,11 +19,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const password = credentials.password as string
           let user = await User.findOne({email})
         if(!user){
-          throw new Error('user not found')
+          return null
         }
         let isMatch = await bcrypt.compare(password,user.password)
         if(!isMatch){
-          throw new Error('incorrect password')
+          return null
         }
         return{
           id:user._id.toString(),

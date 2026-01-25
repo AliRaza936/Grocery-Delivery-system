@@ -32,7 +32,8 @@ const userSlice = createSlice({
          clearUser: (state) => {
       state.userData = null
       state.loading = false
-    }
+    },
+    
     }
 })
 

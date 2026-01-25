@@ -6,6 +6,7 @@ import googleImage from '@/assets/google.png'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
+import toast from 'react-hot-toast'
 
 function RegisterForm() {
   const [name,setName] = useState("")
@@ -16,17 +17,20 @@ function RegisterForm() {
 const router = useRouter()
   const handleSubmit = async(e:React.FormEvent)=>{
     e.preventDefault()
+    if(password.length <6){
+      return toast.error('Password should be at least 6 characters long')
+    }
     setLoading(true)
     try {
       const result = await axios.post("/api/auth/register",{name,email,password})
-      console.log(result)
       if(result.data.success == true){
-
+toast.success(result.data.message || 'Registered successfully')
         router.push('/login')
         setLoading(false)
       }
-    } catch (error) {
+    } catch (error:any) {
       console.log(error)
+      toast.error(error.response?.data?.message || 'Something went wrong')
       setLoading(false)
     }
   }
