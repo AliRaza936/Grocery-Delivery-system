@@ -20,7 +20,7 @@ function GeoUpdater({ userId }: { userId: string }) {
 
     const watcher = navigator.geolocation.watchPosition(
       (pos) => {
-        socket.emit("updateLocation", {
+        socket.emit("", {
           userId,
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
