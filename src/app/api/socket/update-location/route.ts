@@ -6,21 +6,26 @@ export async function POST(req: NextRequest) {
   try {
     await dbConnect();
     const { userId, location } = await req.json();
+
     if (!userId || !location) {
-      return NextResponse.json(
-        { message: "missing userId or location" },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: "missing userId or location" }, { status: 400 });
     }
-    const user = await User.findByIdAndUpdate(userId, { location });
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { location } },
+      { new: true } 
+    );
+
     if (!user) {
       return NextResponse.json({ message: "user not found" }, { status: 400 });
     }
 
-    return NextResponse.json({message:'location updated'},{status:200})
-  } catch (error) {
+    return NextResponse.json({ message: "location updated", user }, { status: 200 });
+  } catch (error: any) {
+    console.error("Update location error:", error);
     return NextResponse.json(
-      { message: `update location error ${error}` },
+      { message: "update location error", error: error.message || error },
       { status: 500 }
     );
   }

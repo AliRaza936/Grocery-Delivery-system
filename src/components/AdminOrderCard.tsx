@@ -8,49 +8,26 @@ import mongoose from "mongoose";
 import { IUser } from "@/models/user.model";
 import { IOrderPopulated } from "@/config/populateOrder";
 import { getSocket } from "@/config/socket";
-interface IOrder {
-  _id?: mongoose.Types.ObjectId;
-  user: mongoose.Types.ObjectId;
-  items: [
-    {
-      grocery: mongoose.Types.ObjectId;
-      name: string;
-      price: string;
-      unit: string;
-      image: string;
-      quantity: number;
-    }
-  ];
-  totalAmount: number;
-  paymentMethod: "cod" | "online";
-  address: {
-    fullName: string;
-    mobile: string;
-    city: string;
-    state: string;
-    pincode: string;
-    fullAddress: string;
-    latitude: number;
-    longitude: number;
-  };
-  assignment?: mongoose.Types.ObjectId;
-  assignedDeliveryBoy?: IUser;
-  status: "pending" | "out of delivery" | "delivered";
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import toast from "react-hot-toast";
+
 
 function AdminOrderCard({ order }: { order: IOrderPopulated }) {
     const statusOptions = ['pending','out of delivery' ]
          const [expanded, setExpended] = useState(false);
           const [status,setStatus] = useState<string>(order.status)
-         const updateStatus = async (orderId:string,status:string)=>{
+         const 
+         updateStatus = async (orderId:string,status:string)=>{
           try {
             const result = await axios.post(`/api/admin/update-order-status/${orderId}`,{status})
-            console.log(result.data)
+
+let availableBoys = result.data.availableBoys
+            if(status == "out of delivery" &&availableBoys?.length == 0 ){
+              toast.error("No delivery boy available right now. Please try again later.")
+            }
             setStatus(status)
           } catch (error) {
-            console.log(error)
+
+            toast.error("Something went wrong. Please try algain.")
           }
          }
          useEffect(() => {
