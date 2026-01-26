@@ -14,11 +14,11 @@ function Welcome({ onFinish }: WelcomeProps) {
     const hasVisited = sessionStorage.getItem("hasVisited");
     if (!hasVisited) {
       setShow(true);
-      document.body.style.overflow = "hidden"; // 🔒 lock scroll
+      document.body.style.overflow = "hidden"; 
     }
 
     return () => {
-      document.body.style.overflow = "auto"; // 🔓 unlock scroll
+      document.body.style.overflow = "auto";
     };
   }, []);
 
@@ -35,7 +35,7 @@ function Welcome({ onFinish }: WelcomeProps) {
     <div className="fixed inset-0 z-9999 bg-linear-to-b from-green-100 via-white to-green-50 flex items-center justify-center">
       <div className="text-center px-6 max-w-xl w-full">
 
-        {/* Logo */}
+   
         <motion.div
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -48,7 +48,7 @@ function Welcome({ onFinish }: WelcomeProps) {
           </h1>
         </motion.div>
 
-        {/* Tagline */}
+
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -61,7 +61,7 @@ function Welcome({ onFinish }: WelcomeProps) {
           </span>
         </motion.p>
 
-        {/* Icons */}
+
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -72,7 +72,7 @@ function Welcome({ onFinish }: WelcomeProps) {
           <Bike className="w-24 h-24 md:w-28 text-orange-500 drop-shadow-lg" />
         </motion.div>
 
-        {/* CTA */}
+
         <motion.button
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

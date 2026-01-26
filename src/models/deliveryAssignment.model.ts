@@ -9,6 +9,7 @@ export interface IDeliveryAssignment{
     acceptedAt:Date
     createdAt?:Date
     updatedAt?:Date
+    rejectedBy: mongoose.Types.ObjectId[]
 }
 
 const deliveryAssignmentSchema = new mongoose.Schema<IDeliveryAssignment>({
@@ -33,7 +34,8 @@ status:{
 },
 acceptedAt:{
     type:Date
-}
+},
+rejectedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: [] }]
 },{timestamps:true})
 
 const DeliveryAssignment = mongoose.models.DeliveryAssignment || mongoose.model('DeliveryAssignment',deliveryAssignmentSchema)

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
-import { ArrowLeft, Building, Circle, CreditCard, CreditCardIcon, Home, Loader2, Locate, LocateFixed, Map, MapPin, Navigation, Phone, SearchCodeIcon, Truck, User } from 'lucide-react'
+import { ArrowLeft, Building, Circle, CreditCard, CreditCardIcon, Home, Loader2, Locate, LocateFixed, Lock, Map, MapPin, Navigation, Phone, SearchCodeIcon, ShoppingCart, Truck, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/redux/store'
@@ -23,7 +23,7 @@ function Checkout() {
   const router = useRouter()
   const dispatch = useDispatch()
 const {userData,loading} = useSelector((state:RootState)=>state.user)
-console.log(loading)
+
 const {subTotal,finalTotal,deliveryfee,cartData} = useSelector((state:RootState)=>state.cart)
 
 
@@ -187,9 +187,9 @@ const handleCod = async ()=>{
 setPlaceOrderLoading(false)
 dispatch(clearCart())
 router.push('/user/order-success')
-    console.log(result.data)
+
   } catch (error) {
-    console.log(error)
+toast.error("Something went wrong. Please try again.")
     setPlaceOrderLoading(false)
   }
 }
@@ -216,29 +216,56 @@ if (cartData.length === 0 && !orderPlaced) return null;
     router.push(`/login?callbackUrl=/user/checkout`)
   }
 
-  if (!loading && showLoginOverlay ) {
-    return (
-      <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-        <motion.div 
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.3 }}
-          className="bg-white rounded-3xl p-10 w-[90%] max-w-md text-center shadow-2xl"
+if (!loading && showLoginOverlay) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 40 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="relative w-[92%] max-w-md rounded-[2.5rem] bg-white p-10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.35)] overflow-hidden"
+      >
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-green-400/30 rounded-full blur-3xl" />
+        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-green-300/20 rounded-full blur-3xl" />
+
+
+        <motion.div
+          animate={{ y: [0, -6, 0] }}
+          transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+          className="relative z-10 w-20 h-20 mx-auto flex items-center justify-center rounded-full bg-linear-to-br from-green-500 to-green-700 shadow-xl"
         >
-          <User className="mx-auto text-green-600" size={50} />
-          <h2 className="text-2xl font-bold mt-4 mb-2 text-gray-800">You must log in</h2>
-          <p className="text-gray-600 mb-6">To place an order, please log in first.</p>
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={handleLoginRedirect}
-            className="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition-all w-full"
-          >
-            Go to Login
-          </motion.button>
+          <ShoppingCart className="text-white" size={36} />
         </motion.div>
-      </div>
-    )
-  }
+
+        <div className="relative z-10 text-center mt-6">
+          <h2 className="text-3xl font-extrabold text-gray-800">
+            Ready to Checkout?
+          </h2>
+
+          <p className="text-gray-600 mt-3 text-sm leading-relaxed">
+            Your cart is safely saved. Sign in to continue checkout and get your
+            groceries delivered to your doorstep.
+          </p>
+
+
+          <motion.button
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            onClick={handleLoginRedirect}
+            className="mt-8 w-full rounded-full bg-linear-to-r from-green-500 to-green-700 py-4 text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all"
+          >
+            Continue Secure Checkout
+          </motion.button>
+
+          <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-400">
+            <Lock size={14} />
+            <span>Secure login • No payment charged yet</span>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  )
+}
 
   return (
     <div className="w-[92%] md:w-[80%] mx-auto py-10 relative">

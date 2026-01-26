@@ -5,6 +5,7 @@ import dbConnect from '@/config/db'
 import Grocery, { IGrocery } from '@/models/grocery.model'
 import GroceryitemCard from "@/components/GroceryItemCard"
 import BudgetTracker from './BudgetTracker'
+import ScrollToGroceries from './ScrollToGroceries'
 
 async function UserDashboard({groceriesList}:{groceriesList:IGrocery[]}) {
   await dbConnect()
@@ -12,13 +13,14 @@ async function UserDashboard({groceriesList}:{groceriesList:IGrocery[]}) {
   let plainGrocery = JSON.parse(JSON.stringify(groceriesList))
   return (
     <>
+    <ScrollToGroceries/>
      <HeroSection/>
 
         <BudgetTracker
 
         />
      <CategoriesSlider/>
-<div className="w-[90%] md:w-[80%] mx-auto mt-10">
+<div  id="groceries-section" className="w-[90%] md:w-[80%] mx-auto mt-10">
   <h2 className="text-2xl md:text-3xl font-bold text-green-700 mb-6 text-center">
     Popular Grocery Items
   </h2>

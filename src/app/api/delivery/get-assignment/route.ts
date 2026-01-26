@@ -9,7 +9,8 @@ export async function GET() {
         const session = await auth()
         const assignments = await DeliveryAssignment.find({
                 broadcastedTo:session?.user?.id,
-                status:'brodcasted'
+                status:'brodcasted',
+                rejectedBy: { $ne: session?.user?.id }
         }).populate('order').sort({createdAt:-1})
         return NextResponse.json(assignments,{status:200})
     } catch (error) {

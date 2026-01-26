@@ -45,7 +45,9 @@ export async function POST(req:NextRequest,context:{params:Promise<{orderid:stri
             const availableDeliveryBoy = nearByDeliveryBoy.filter(
                 b=>!busyIdsSet.has(String(b._id))
             )
-            const candidates = availableDeliveryBoy.map(b=>b._id)
+            const candidates = availableDeliveryBoy
+  .filter(b => !b.rejectedBy?.includes(b._id))
+  .map(b => b._id)
 
             if(candidates.length==0){
                 await order.save()

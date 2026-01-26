@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { AnimatePresence, motion } from "motion/react";
 import { IMessage } from "@/models/message.model";
+import toast from "react-hot-toast";
 
 interface Location {
   latitude: number;
@@ -139,7 +140,7 @@ function TrackOrder() {
         });
         setMessages(result?.data);
       } catch (error) {
-        console.log(error);
+        toast.error("Something went wrong. Please try again.")
       }
     };
     getAllMessages();
@@ -179,7 +180,7 @@ function TrackOrder() {
       setSuggestions(result?.data)
       setLoading(false)
     } catch (error) {
-      console.log(error)
+      toast.error("Something went wrong. Please try again.")
       setLoading(false)
     }
   }

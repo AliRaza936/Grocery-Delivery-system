@@ -29,7 +29,7 @@ toast.success(result.data.message || 'Registered successfully')
         setLoading(false)
       }
     } catch (error:any) {
-      console.log(error)
+
       toast.error(error.response?.data?.message || 'Something went wrong')
       setLoading(false)
     }

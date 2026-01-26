@@ -8,9 +8,10 @@ import { useSelector } from 'react-redux'
 import LiveMap from './LiveMap'
 import DeliveryChat from './DeliveryChat'
 import Order from '@/models/order.model'
-import { Loader } from 'lucide-react'
+import { Loader, Loader2 } from 'lucide-react'
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { subscribeSocketConnection } from '@/config/isSocketConnect'
+import toast from 'react-hot-toast'
 
 interface Location{
   latitude:number
@@ -24,6 +25,9 @@ function DeliveryBoyDashboard({earning}:{earning:number}) {
     latitude:0,
     longitude:0
   })
+  const [acceptLoading,setAcceptLoading] = useState(false)
+  const [rejectLoading,setRejectLoading] = useState(false)
+  
   const [deliveryLocation,setDeliveryLocation] = useState<Location>({
     latitude:0,
     longitude:0
@@ -40,14 +44,14 @@ function DeliveryBoyDashboard({earning}:{earning:number}) {
 
       setassignments(result?.data)
     } catch (error) {
-      console.log(error)
+      toast.error("Something went wrong. Please try again.")
     }
   }
 
   useEffect(()=>{
     const socket = getSocket()
      if(!userData?._id)return
-            
+           
             const watcher =  navigator.geolocation.watchPosition((pos)=>{
                 const lat = pos.coords.latitude
                 const lon = pos.coords.longitude
@@ -61,7 +65,9 @@ function DeliveryBoyDashboard({earning}:{earning:number}) {
                 longitude:lon
             })
             },(error)=>{
-                    console.log(error)
+                    
+              toast.error('Fetching Location Failed. Please Enable Location Services')
+
             },{enableHighAccuracy:true})
 
         return ()=>navigator.geolocation.clearWatch(watcher)
@@ -81,7 +87,7 @@ function DeliveryBoyDashboard({earning}:{earning:number}) {
  const fetchCurrentOrder = async ()=>{
   try {
     const result = await axios.get('/api/delivery/current-order')
-    console.log(result)
+
     if(result.data.active){
        setActiveOrder(result.data.assignment)
       setUserLoation({
@@ -93,6 +99,7 @@ function DeliveryBoyDashboard({earning}:{earning:number}) {
     
   } catch (error) {
     console.log(error)
+
   }
  }
  useEffect(()=>{
@@ -100,14 +107,32 @@ fetchCurrentOrder()
 fetchAssignments()
  },[userData])
 const handleAccept = async (id:string)=>{
+  setAcceptLoading(true)
   try {
     let result = await axios.get(`/api/delivery/assignment/${id}/accept-assignment`)
     
     fetchCurrentOrder()
+    setAcceptLoading(false)
+    toast.success("You accepted the assignment ✅")
   } catch (error) {
-    console.log(error)
+toast.error("Failed to accept assignment")
+    setAcceptLoading(false)
   }
 }
+const handleReject = async (id: string) => {
+  setRejectLoading(true);
+  try {
+    await axios.post('/api/delivery/reject', { assignmentId: id });
+    setassignments(prev => prev?.filter(a => a._id !== id));
+
+    toast.success("You rejected this assignment ❌");
+  } catch (error) {
+
+    toast.error("Failed to reject assignment");
+  } finally {
+    setRejectLoading(false);
+  }
+};
  useEffect(()=>{
   const socket = getSocket()
   socket.on('update-deliveryboy-location',({userId,location})=>{
@@ -121,16 +146,15 @@ const handleAccept = async (id:string)=>{
 const sendOtp = async()=>{
   setSendOtpLoading(true)
   try {
-    
-      
-    
+
     const result = await axios.post("/api/delivery/otp/send",{orderId:activeOrder.order._id})
     console.log(result.data)
   setSendOtpLoading(false)
     setShowOtpBox(true)
 
   } catch (error) {
-    console.log(error)
+
+    toast.error("Failed to send OTP")
   setSendOtpLoading(false)
 
   }
@@ -143,12 +167,15 @@ const verifyOtp = async()=>{
    setActiveOrder(null)
   setVerifyOtpLoading(false)
       setassignments([])
-
+toast.success("OTP Verified Successfully. Delivery Completed!")
   await fetchCurrentOrder()
-window.location.reload()
-  } catch (error) {
-    console.log(error)
-    setOtpError("Otp Verification Error")
+  setTimeout(() => {
+    
+    window.location.reload()
+  }, 1500);
+  } catch (error:any) {
+
+    toast.error(error?.response?.data?.message || "Failed to verify OTP")
   setVerifyOtpLoading(false)
 
   }
@@ -286,8 +313,8 @@ return(
             <p className='text-gray-600'>{a.order.address.fullAddress}</p>
 
             <div className='flex gap-3 mt-4'>
-                <button onClick={()=>handleAccept(a?._id)} className='flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg cursor-pointer'>Accept</button>
-                <button className='flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg cursor-pointer'>Reject</button>
+                <button disabled={acceptLoading || rejectLoading} onClick={()=>handleAccept(a?._id)} className='flex-1 flex justify-center bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg cursor-pointer'>{acceptLoading?<Loader2 className='animate-spin'/>:"Accept"}</button>
+                <button onClick={()=>handleReject(a._id)} disabled={acceptLoading || rejectLoading} className='flex-1 flex justify-center bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg cursor-pointer'>{rejectLoading?<Loader2 className='animate-spin'/>:"Reject"}</button>
             </div>
            </div>
           ))

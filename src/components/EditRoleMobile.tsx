@@ -5,6 +5,7 @@ import { ArrowRight, Bike, User } from "lucide-react";
 import axios from "axios";
 import { redirect, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import toast from "react-hot-toast";
 
 function EditRoleMobile() {
   const [role, setRole] = useState([
@@ -25,7 +26,7 @@ const handleEditRoleMobile = async () => {
         await update({role:result.data.role})
         router.push('/')
     } catch (error) {
-        console.log("Error updating role and mobile:", error)
+        toast.error("Failed to update role and mobile number. Please try again.")
         setLoading(false)
     }
 }

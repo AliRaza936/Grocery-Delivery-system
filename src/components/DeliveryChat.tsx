@@ -6,6 +6,7 @@ import mongoose from 'mongoose'
 import { AnimatePresence } from 'motion/react'
 import React, { useEffect, useState } from 'react'
 import {motion} from 'motion/react'
+import toast from 'react-hot-toast'
 type props={
     orderId:mongoose.Types.ObjectId,
     deliveryBoyId:mongoose.Types.ObjectId
@@ -56,7 +57,8 @@ try {
   const result = await axios.post("/api/chat/messages",{roomId:orderId})
   setMessages(result?.data)
 } catch (error) {
-  console.log(error)
+  toast.error("Failed to load messages. Please try again.")
+
 }
 }
 getAllMessages()
@@ -73,7 +75,7 @@ const getSuggestion = async()=>{
     setSuggestions(result?.data)
     setLoading(false)
   } catch (error) {
-    console.log(error)
+    toast.error("Failed to get suggestions. Please try again.")
     setLoading(false)
   }
 }

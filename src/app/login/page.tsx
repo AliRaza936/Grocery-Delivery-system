@@ -60,7 +60,7 @@ router.push(callbackUrl)
     }
   } catch (err) {
     toast.error("Something went wrong. Please try again");
-    console.log(err);
+
   } finally {
     setLoading(false);
   }

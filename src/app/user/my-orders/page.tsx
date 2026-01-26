@@ -8,6 +8,7 @@ import {motion} from 'motion/react'
 import MyOrderCard from '@/components/MyOrderCard'
 import { IOrderPopulated } from '@/config/populateOrder'
 import { getSocket } from '@/config/socket'
+import toast from 'react-hot-toast'
 function MyOrder() {
 const router =  useRouter()
 const [orders,setOrders] = useState<IOrderPopulated[]>()
@@ -19,7 +20,7 @@ const [loading,setLoading] = useState(true)
 
       setLoading(false)
     } catch (error) {
-      console.log(error)
+      toast.error("Something went wrong. Please try again.")
     }
   }
   useEffect(()=>{

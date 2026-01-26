@@ -2,10 +2,12 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import {AnimatePresence, motion} from 'motion/react'
-import { ArrowLeft, Package, Pencil, Search, Upload, X } from 'lucide-react'
+import { ArrowLeft, Loader2, Package, Pencil, Search, Upload, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { IGrocery } from '@/models/grocery.model'
 import Image from 'next/image'
+import { useSession } from 'next-auth/react'
+import toast from 'react-hot-toast'
 function ViewGrocery() {
     const router = useRouter()
     const [groceries,setGroceries] = useState<IGrocery[]>()
@@ -14,6 +16,8 @@ function ViewGrocery() {
     const [backendImage,setBackendImage] = useState<Blob | null>(null)
     const [search,setSearch] = useState<string>("")
     const [filterd,setFiltered] = useState<IGrocery[]>()
+    const [editLoading,setEditLoading] = useState<boolean>(false)
+    const [deleteLoading,setDeleteLoading] = useState<boolean>(false)
   const categories =[
             "Fruits & Vegetables",
             "Dairy & Eggs",
@@ -27,14 +31,16 @@ function ViewGrocery() {
             "Baby & Pet Care"
         ]
         const units = ["kg","g","liter","ml","piece","pack"] 
+        const{data:session} = useSession()
     const getGroceries = async()=>{
         try {
             let result = await axios.get("/api/admin/get-groceries")
             setGroceries(result.data)
             setFiltered(result.data)
-            console.log(result)
+
         } catch (error) {
-            console.log(error)
+
+            toast.error("Something went wrong. Please try again.")
         }
     }
     useEffect(()=>{
@@ -64,6 +70,11 @@ useEffect(() => {
         if(!editing){
             return
         }
+        if(session?.user?.role !== "admin" ){
+            toast.error("You are not authorized to perform this action")
+            return
+        }
+        setEditLoading(true)
         try {
                 const formData = new FormData()
     formData.append('name',editing?.name)
@@ -77,25 +88,38 @@ useEffect(() => {
       formData.append('image',backendImage)
     }
     const result = await axios.post("/api/admin/edit-groceries",formData)
-    console.log(result)
+
+    toast.success("Grocery item updated successfully")
     setEditing(null)
+    setEditLoading(false)
     getGroceries()
         } catch (error) {
-            console.log(error)
+          setEditLoading(false)
+          toast.error("Something went wrong. Please try again.")
+
         }
     }
     const deleteGrocery =async ()=>{
         if(!editing){
             return
         }
+        if(session?.user?.role !== "admin" ){
+           toast.error("You are not authorized to perform this action")
+          return
+        }
+        setDeleteLoading(true)
         try {
                
     const result = await axios.post("/api/admin/delete-grocery",{groceryId:editing._id})
     setEditing(null)
+    setDeleteLoading(false)
+    toast.success("Grocery item deleted successfully")
     getGroceries()
-    console.log(result)
+
         } catch (error) {
-            console.log(error)
+          setDeleteLoading(false)
+          toast.error("Something went wrong. Please try again.")
+
         }
     }
     useEffect(() => {
@@ -260,8 +284,8 @@ useEffect(() => {
                                 </div>
                                 <div className='flex justify-end gap-3 mt-6'>
 
-                                <button onClick={handleEditGrocery} className='px-4 py-2 rounded-lg border bg-green-600 hover:bg-green-700 text-white flex items-center gap-2  transition cursor-pointer'>Edit Grocery</button>
-                                <button onClick={deleteGrocery} className='px-4 py-2 rounded-lg border bg-red-600 hover:bg-red-700 text-white flex items-center gap-2   transition cursor-pointer'>Delete Grocery</button>
+                                <button disabled={editLoading || deleteLoading} onClick={handleEditGrocery} className='px-4 py-2 rounded-lg border bg-green-600 hover:bg-green-700 text-white flex items-center gap-2  transition cursor-pointer'>{editLoading?<Loader2 className='animate-spin'/>:"Edit Grocery"}</button>
+                                <button disabled={editLoading || deleteLoading} onClick={deleteGrocery} className='px-4 py-2 rounded-lg border bg-red-600 hover:bg-red-700 text-white flex items-center gap-2   transition cursor-pointer'>{deleteLoading?<Loader2 className='animate-spin'/>:"Delete Grocery"}</button>
                                 </div>
                         </motion.div>
                     </motion.div>

@@ -5,6 +5,9 @@ import React, { ChangeEvent, FormEvent, useState } from "react";
 import {motion} from 'motion/react'
 import Image from "next/image";
 import axios from "axios";
+import { useSession } from "next-auth/react";
+import toast from "react-hot-toast";
+
 
 
   const categories =[
@@ -27,7 +30,7 @@ function AddGrocery() {
   const [price,setPrice] = useState("")
   const [preview,setPreview] = useState<string|null>()
   const [backendImage,setBackendImage] = useState<File|null>()
-
+const {data:session} = useSession()
   const [loading,setLoading] = useState(false)
 
 const handleImageChange = (e:ChangeEvent<HTMLInputElement>)=>{
@@ -42,6 +45,18 @@ const handleImageChange = (e:ChangeEvent<HTMLInputElement>)=>{
 const handleSubmit = async(e:FormEvent)=>{
   e.preventDefault()
 
+if(session?.user?.role !== "admin" ){
+   toast.error("You are not authorized to perform this action")
+  return
+}
+if(!name || !category || !price || !unit){
+  toast.error("Please fill all the required fields")
+  return
+}
+if(!backendImage){
+  toast.error("Please upload an image for the grocery item")
+  return
+}
   try {
     const formData = new FormData()
     formData.append('name',name)
@@ -55,10 +70,12 @@ const handleSubmit = async(e:FormEvent)=>{
     }
     setLoading(true)
     let result = await axios.post("/api/admin/add-grocery",formData)
-    console.log(result)
+      toast.success("Grocery item added successfully")
+
     setLoading(false)
   } catch (error) {
-    console.log(error)
+    
+    toast.error("Something went wrong. Please try again.")
     setLoading(false)
   }
 }
