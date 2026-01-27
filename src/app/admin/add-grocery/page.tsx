@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
   const categories =[
             "Fruits & Vegetables",
             "Dairy & Eggs",
+            "Breakfast Essentials",
             "Rice, Atta & Grains",
             "Snacks & Biscuits",
             "Spices & Masalas",

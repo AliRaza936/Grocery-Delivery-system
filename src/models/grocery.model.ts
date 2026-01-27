@@ -17,6 +17,7 @@ const GrocerySchema = new mongoose.Schema<IGrocery>({
         enum:[
             "Fruits & Vegetables",
             "Dairy & Eggs",
+            "Breakfast Essentials",
             "Rice, Atta & Grains",
             "Snacks & Biscuits",
             "Spices & Masalas",
