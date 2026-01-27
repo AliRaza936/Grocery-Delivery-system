@@ -22,6 +22,7 @@ import {
 import { subscribeSocketConnection } from "@/config/isSocketConnect";
 import toast from "react-hot-toast";
 import {motion, AnimatePresence } from "motion/react";
+import { setTimeout } from "timers";
 
 interface Location {
   latitude: number;
@@ -84,7 +85,7 @@ function DeliveryBoyDashboard({ earning }: { earning: number }) {
         });
       },
       (error) => {
-        toast.error("Allow location access to continue");
+       console.log(error)
 
       },
       { enableHighAccuracy: true },
@@ -178,13 +179,15 @@ function DeliveryBoyDashboard({ earning }: { earning: number }) {
   }, []);
   const sendOtp = async () => {
     setSendOtpLoading(true);
+    setTimeout  (() => {
+      setSendOtpLoading(false);
+      setShowOtpBox(true);
+    }, 3000);
     try {
       const result = await axios.post("/api/delivery/otp/send", {
         orderId: activeOrder.order._id,
       });
-
-      setSendOtpLoading(false);
-      setShowOtpBox(true);
+     
     } catch (error) {
 
       setSendOtpLoading(false);
@@ -205,7 +208,7 @@ function DeliveryBoyDashboard({ earning }: { earning: number }) {
       await fetchCurrentOrder();
       window.location.reload();
     } catch (error:any) {
-console.log(error)
+
       setOtpError(error?.response?.data?.message || "Invalid Otp");
       toast.error(error?.response?.data?.message || "Invalid Otp");
       

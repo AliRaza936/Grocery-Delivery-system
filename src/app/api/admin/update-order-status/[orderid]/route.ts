@@ -52,7 +52,8 @@ export async function POST(req:NextRequest,context:{params:Promise<{orderid:stri
             if(candidates.length==0){
                 await order.save()
 
-                await emitEventHandler('order-status-update',{orderId:order._id,status:order.status})
+                await emitEventHandler('order-status-update', { orderId: order._id, status: order.status }, undefined, order.user._id);
+
 
             return NextResponse.json({message:'there is no available Delivery Boy'},{status:200})
             }
@@ -89,7 +90,8 @@ export async function POST(req:NextRequest,context:{params:Promise<{orderid:stri
             select:'-password'
         })
 
-                await emitEventHandler('order-status-update',{orderId:order._id,status:order.status})
+                await emitEventHandler('order-status-update', { orderId: order._id, status: order.status }, undefined, order.user._id);
+
 
 
         return NextResponse.json({

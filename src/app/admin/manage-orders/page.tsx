@@ -43,10 +43,27 @@ function ManageOrders() {
     };
   }, []);
 const [isConnected, setIsConnected] = useState<boolean>(false);
- useEffect(() => {
-  subscribeSocketConnection(setIsConnected);
+const [socketError, setSocketError] = useState(false);
+
+useEffect(() => {
+
+  const cleanup = subscribeSocketConnection((connected) => {
+    setIsConnected(connected);
+    if (!connected) setSocketError(true); 
+  });
+
+
+  const timeout = setTimeout(() => {
+    if (!isConnected) setSocketError(true);
+  }, 5000);
+
+  return () => {
+    cleanup?.();
+    clearTimeout(timeout);
+  };
 }, []);
-if (!isConnected) {
+
+if (!isConnected && !socketError) {
   return (
     <div className="w-full h-screen flex items-center justify-center">
       <Loader className="animate-spin w-10 h-10 text-green-600" />
@@ -54,6 +71,7 @@ if (!isConnected) {
     </div>
   );
 }
+
   return (
     <div className="min-h-screen bg-gray-50 w-full">
       <div className="fixed top-0 left-0 w-full backdrop-blur-lg bg-white/70 shadow-sm border-b border-gray-500 z-50">

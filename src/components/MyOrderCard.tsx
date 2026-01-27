@@ -63,8 +63,9 @@ const router = useRouter()
   };
  useEffect(() => {
   const socket = getSocket()
-
+console.log('asd')
   const handleStatusUpdate = (data:any) => {
+    console.log(data)
     if (data.orderId === order._id?.toString()) {
       setStatus(data.status)
     }
@@ -76,6 +77,17 @@ const router = useRouter()
     socket.off("order-status-update", handleStatusUpdate)
   }
 }, [order._id])
+useEffect(() => {
+  const initSocket = async () => {
+    const socket = getSocket();
+    if (!socket.connected) socket.connect();
+    if(order?.user?._id){
+
+      socket.emit("identity", order?.user?._id.toString()); 
+    }
+  };
+  initSocket();
+}, [order.user._id]);
   useEffect(() => {
   const socket = getSocket()
 

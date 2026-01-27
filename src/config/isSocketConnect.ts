@@ -1,26 +1,25 @@
-// config/isSocketConnect.ts
-import { getSocket } from "./socket";
 
-let socketConnected = false;
+import { getSocket } from "./socket";
 
 export const subscribeSocketConnection = (callback: (connected: boolean) => void) => {
   const socket = getSocket();
+  if (!socket) return;
 
 
   callback(socket.connected);
 
+
   socket.on("connect", () => {
-    socketConnected = true;
     callback(true);
   });
+  
+  const handleDisconnect = () => callback(false);
+  socket.on("disconnect", handleDisconnect);
+  socket.on("connect_error", handleDisconnect);
 
-  socket.on("disconnect", () => {
-    socketConnected = false;
-    callback(false);
-  });
-
-  socket.on("connect_error", () => {
-    socketConnected = false;
-    callback(false);
-  });
+  return () => {
+    socket.off("connect");
+    socket.off("disconnect", handleDisconnect);
+    socket.off("connect_error", handleDisconnect);
+  };
 };
