@@ -1,25 +1,39 @@
-
 import { getSocket } from "./socket";
 
-export const subscribeSocketConnection = (callback: (connected: boolean) => void) => {
+export const subscribeSocketConnection = (
+  callback: (connected: boolean) => void
+) => {
   const socket = getSocket();
-  if (!socket) return;
 
 
-  callback(socket.connected);
+  if (!socket.connected) {
+    socket.connect();
+  }
 
-
-  socket.on("connect", () => {
+  if (socket.connected) {
     callback(true);
-  });
-  
-  const handleDisconnect = () => callback(false);
-  socket.on("disconnect", handleDisconnect);
-  socket.on("connect_error", handleDisconnect);
+  }
+
+  const onConnect = () => {
+    callback(true);
+  };
+
+  const onDisconnect = () => {
+    callback(false);
+  };
+
+  const onError = () => {
+    callback(false);
+  };
+
+  socket.on("connect", onConnect);
+  socket.on("disconnect", onDisconnect);
+  socket.on("connect_error", onError);
+
 
   return () => {
-    socket.off("connect");
-    socket.off("disconnect", handleDisconnect);
-    socket.off("connect_error", handleDisconnect);
+    socket.off("connect", onConnect);
+    socket.off("disconnect", onDisconnect);
+    socket.off("connect_error", onError);
   };
 };

@@ -8,6 +8,7 @@ export const getSocket = () => {
       transports: ["websocket"],
       reconnection: true,
       reconnectionAttempts: 5,
+      autoConnect:true,
     })
   }
   return socket

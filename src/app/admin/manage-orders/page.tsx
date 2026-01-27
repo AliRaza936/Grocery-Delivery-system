@@ -11,14 +11,18 @@ import React, { useEffect, useState } from "react";
 
 function ManageOrders() {
   const [orders, setOrders] = useState<IOrderPopulated[]>([]);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [loading,setLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const getOrders = async () => {
+    setLoading(true);
     try {
       const result = await axios.get("/api/admin/get-orders");
       setOrders(result.data);
+      setLoading(false);
     } catch (error) {
-
+setLoading(false);
     }
   };
 
@@ -42,28 +46,15 @@ function ManageOrders() {
       socket.off("order-assinged")
     };
   }, []);
-const [isConnected, setIsConnected] = useState<boolean>(false);
-const [socketError, setSocketError] = useState(false);
 
 useEffect(() => {
-
-  const cleanup = subscribeSocketConnection((connected) => {
-    setIsConnected(connected);
-    if (!connected) setSocketError(true); 
-  });
-
-
-  const timeout = setTimeout(() => {
-    if (!isConnected) setSocketError(true);
-  }, 5000);
+  const unsubscribe = subscribeSocketConnection(setIsConnected);
 
   return () => {
-    cleanup?.();
-    clearTimeout(timeout);
+    unsubscribe?.();
   };
 }, []);
-
-if (!isConnected && !socketError) {
+if (!isConnected) {
   return (
     <div className="w-full h-screen flex items-center justify-center">
       <Loader className="animate-spin w-10 h-10 text-green-600" />
@@ -71,7 +62,14 @@ if (!isConnected && !socketError) {
     </div>
   );
 }
-
+if (isConnected && loading) {
+  return (
+    <div className="w-full h-screen flex items-center justify-center">
+      <Loader className="animate-spin w-10 h-10 text-green-600" />
+      <p className="ml-2 text-green-700 font-semibold">Loading Orders...</p>
+    </div>
+  );
+}
   return (
     <div className="min-h-screen bg-gray-50 w-full">
       <div className="fixed top-0 left-0 w-full backdrop-blur-lg bg-white/70 shadow-sm border-b border-gray-500 z-50">

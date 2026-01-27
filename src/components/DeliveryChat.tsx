@@ -34,7 +34,10 @@ function DeliveryChat({orderId,deliveryBoyId}:props) {
     },[])
     const sendMsg  = ()=>{
         const socket = getSocket()
-
+        if(newMessage.trim()==''){
+            toast.error("Message cannot be empty.")
+            return
+        }
         const message = {
             roomId:orderId,
             text:newMessage,
