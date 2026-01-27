@@ -61,15 +61,21 @@ const router = useRouter()
         return "bg-gray-100 text-gray-600 border-gray-300";
     }
   };
-  useEffect(():any=>{
-    const socket = getSocket()
-    socket.on('order-status-update',(data)=>{
-      if(data.orderId == order._id){
-        setStatus(data.status)
-      }
-    })
-    return ()=>socket.off('order-status-update')
-  },[])
+ useEffect(() => {
+  const socket = getSocket()
+
+  const handleStatusUpdate = (data:any) => {
+    if (data.orderId === order._id?.toString()) {
+      setStatus(data.status)
+    }
+  }
+
+  socket.on("order-status-update", handleStatusUpdate)
+
+  return () => {
+    socket.off("order-status-update", handleStatusUpdate)
+  }
+}, [order._id])
   useEffect(() => {
   const socket = getSocket()
 

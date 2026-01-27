@@ -9,32 +9,35 @@ function GeoUpdater({ userId }: { userId: string }) {
   const socketRef = useRef<any>(null);
 
   useEffect(() => {
-    if (status !== "authenticated") return;
-    if (!userId) return;
+  if (status !== "authenticated") return;
+  if (!userId) return;
 
-    const socket = getSocket();
-    socketRef.current = socket;
+  const socket = getSocket();
+  socketRef.current = socket;
 
+  if (!socket.connected) {
     socket.connect();
     socket.emit("identity", userId);
+  }
 
-    const watcher = navigator.geolocation.watchPosition(
-      (pos) => {
-        socket.emit("", {
-          userId,
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
-        });
-      },
-      (error) => console.log(error),
-      { enableHighAccuracy: true }
-    );
+  const watcher = navigator.geolocation.watchPosition(
+    (pos) => {
+      socket.emit("updateLocation", {
+        userId,
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude,
+      });
+    },
+    console.error,
+    { enableHighAccuracy: true }
+  );
 
-    return () => {
-      navigator.geolocation.clearWatch(watcher);
-      socket.disconnect();
-    };
-  }, [status, userId]);
+  return () => {
+    navigator.geolocation.clearWatch(watcher);
+    socket.disconnect();
+  };
+}, [status, userId]);
+
 
   return null;
 }

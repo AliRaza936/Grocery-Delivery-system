@@ -13,7 +13,8 @@ export async function proxy(req:NextRequest){
   pathname.startsWith("/register") ||
   pathname.startsWith("/user/cart") ||
   pathname.startsWith("/user/checkout") ||
-  pathname.startsWith("/api/auth")
+  pathname.startsWith("/api/auth") ||
+  pathname.startsWith("/api/socket")
 ) {
   return NextResponse.next()
 }

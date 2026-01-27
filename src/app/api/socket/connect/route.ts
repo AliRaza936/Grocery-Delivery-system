@@ -6,11 +6,13 @@ export async function POST(req:NextRequest) {
     try {
         await dbConnect()
         const {userId,socketId} = await req.json()
+        console.log(userId,socketId)
        const user =  await User.findByIdAndUpdate(userId,{
-            socketId,
+            socketId:socketId,
             isOnline:true
 
         },{new:true})
+        console.log(user)
         if(!user){
         return NextResponse.json({message:'user not found'},{status:400})
 

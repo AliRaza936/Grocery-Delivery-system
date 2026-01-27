@@ -226,8 +226,7 @@ function TrackOrder() {
               deliveryBoyLocation={deliveryLocation}
             />
           </div>
-
-          <div className="bg-white rounded-3xl shadow-lg border p-4 h-[430px] border-gray-600 flex flex-col">
+{order?.status !=='delivered' && <div className="bg-white rounded-3xl shadow-lg border p-4 h-[430px] border-gray-600 flex flex-col">
             <div className="flex justify-between items-center mb-3">
               <span className="font-semibold text-gray-700 text-sm">
                 Quick Replies
@@ -300,7 +299,8 @@ function TrackOrder() {
                 <Send size={18} />
               </button>
             </div>
-          </div>
+          </div> }
+         
         </div>
       </div>
     </div>
