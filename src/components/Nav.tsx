@@ -182,7 +182,7 @@ router.push(`/?q=${encodeURIComponent(query)}`, { scroll: false });
       </Link>
       {(!user || user?.role == "user") && (
     <form onSubmit={handleSearch} className="w-full hidden md:flex  justify-center">
-      <div className="hidden md:flex items-center bg-white rounded-full px-4 py-2 w-1/2 max-w-lg">
+      <div className="hidden md:flex items-center bg-white rounded-full px-4 py-2 w-1/2 max-w-lg cursor-pointer">
              <Search className="text-gray-500 w-5 h-5 mr-2" />{" "}
             <input
               type="text"
@@ -202,7 +202,7 @@ router.push(`/?q=${encodeURIComponent(query)}`, { scroll: false });
         {(!user || user?.role == "user") && (
           <>
             <div
-              className="bg-white rounded-full w-11 h-11 flex items-center justify-center shadow-md hover:scale-105 transition md:hidden"
+              className="bg-white rounded-full w-11 h-11 flex items-center cursor-pointer justify-center shadow-md hover:scale-105 transition md:hidden"
               onClick={() => setSearchBarOpen((pre) => !pre)}
             >
               <Search className="text-green-600 w-6 h-6" />
@@ -414,7 +414,7 @@ router.push(`/?q=${encodeURIComponent(query)}`, { scroll: false });
                   />
                 </form>
 
-                <button>
+                <button className="cursor-pointer">
                   <X
                     className="text-gray-500 w-5 h-5 "
                     onClick={() => setSearchBarOpen(false)}

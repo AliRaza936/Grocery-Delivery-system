@@ -69,7 +69,7 @@ export default function BudgetTracker() {
                   setCustom("");
                   setBudget(amt);
                 }}
-                className="py-2 rounded-xl bg-green-100 text-green-700 font-semibold hover:bg-green-200"
+                className="py-2 rounded-xl cursor-pointer bg-green-100 text-green-700 font-semibold hover:bg-green-200"
               >
                 Rs. {amt}
               </button>
@@ -78,7 +78,7 @@ export default function BudgetTracker() {
 
           <button
             onClick={() => setShowCustom(true)}
-            className="w-[70%] mx-auto flex items-center justify-center gap-2 py-2 rounded-xl border font-semibold text-gray-700 hover:bg-gray-100"
+            className="w-[70%] cursor-pointer mx-auto flex items-center justify-center gap-2 py-2 rounded-xl border font-semibold text-gray-700 hover:bg-gray-100"
           >
             <Plus className="w-4 h-4" /> Custom Budget
           </button>
@@ -121,7 +121,7 @@ export default function BudgetTracker() {
             flex-1 
             py-2.5 
             rounded-xl 
-             
+             cursor-pointer
             font-semibold 
             text-gray-600 
             hover:bg-gray-100
@@ -145,6 +145,7 @@ export default function BudgetTracker() {
             text-white 
             font-semibold 
             disabled:opacity-40
+            cursor-pointer
           "
                   >
                     Confirm
