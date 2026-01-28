@@ -56,7 +56,7 @@ if(searchParams.q){
       ) : user?.role == "admin" ? (
         <AdminDashboard />
       ) : (
-        <UserDashboard groceriesList={groceryList}/>
+        <UserDashboard groceriesList={groceryList} q={searchParams.q}/>
       )}
       <Footer user={plainUser}/>
     </>
