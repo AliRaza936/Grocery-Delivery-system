@@ -18,18 +18,20 @@ function ViewGrocery() {
     const [filterd,setFiltered] = useState<IGrocery[]>()
     const [editLoading,setEditLoading] = useState<boolean>(false)
     const [deleteLoading,setDeleteLoading] = useState<boolean>(false)
-  const categories =[
-            "Fruits & Vegetables",
-            "Dairy & Eggs",
-            "Rice, Atta & Grains",
-            "Snacks & Biscuits",
-            "Spices & Masalas",
-            "Beverages & Drinks",
-            "Personal Care",
-            "Household Essentials",
-            "Instant & Packaged Foods",
-            "Baby & Pet Care"
-        ]
+    const [slug,setSlug] = useState('')
+  const categories = [
+  { id: 1, label: "Fruits & Vegetables", value: "fruits-vegetables" },
+  { id: 2, label: "Dairy & Eggs", value: "dairy-eggs" },
+  { id: 3, label: "Breakfast Essentials", value: "breakfast-essentials" },
+  { id: 4, label: "Rice, Atta & Grains", value: "rice-atta-and-grains" },
+  { id: 5, label: "Snacks & Biscuits", value: "snacks-and-biscuits" },
+  { id: 6, label: "Spices & Masalas", value: "spices-and-masalas" },
+  { id: 7, label: "Beverages & Drinks", value: "beverages-and-drinks" },
+  { id: 8, label: "Personal Care", value: "personal-care" },
+  { id: 9, label: "Household Essentials", value: "household-essentials" },
+  { id: 10, label: "Instant & Packaged Food", value: "instant-packaged-food" },
+  { id: 11, label: "Baby & Pet Care", value: "baby-pet-care" },
+]
         const units = ["kg","g","liter","ml","piece","pack"] 
         const{data:session} = useSession()
     const getGroceries = async()=>{
@@ -70,8 +72,17 @@ useEffect(() => {
         if(!editing){
             return
         }
+        
         if(session?.user?.role !== "admin" ){
             toast.error("You are not authorized to perform this action")
+            return
+        }
+        if(!editing.name || !editing.category || !editing.price || !editing.unit){
+            toast.error("Please fill all the fields")
+            return
+        }
+        if(!backendImage && !previewImage){
+            toast.error("Please select an image")
             return
         }
         setEditLoading(true)
@@ -80,9 +91,10 @@ useEffect(() => {
     formData.append('name',editing?.name)
     formData.append('groceryId',editing?._id?.toString()!)
     formData.append('category',editing?.category)
+    formData.append("slug", editing?.slug);
     formData.append('price',editing?.price)
     formData.append('unit',editing?.unit)
-
+    console.log(slug)
     if(backendImage){
 
       formData.append('image',backendImage)
@@ -107,9 +119,14 @@ useEffect(() => {
            toast.error("You are not authorized to perform this action")
           return
         }
-        setDeleteLoading(true)
+      
         try {
-               
+                const confirmDelete = window.confirm(
+    `Are you sure you want to delete "${editing.name}"?`
+  );
+
+  if (!confirmDelete) return;
+    setDeleteLoading(true)
     const result = await axios.post("/api/admin/delete-grocery",{groceryId:editing._id})
     setEditing(null)
     setDeleteLoading(false)
@@ -256,13 +273,25 @@ useEffect(() => {
                                          className='w-full border border-gray-300 rounded-lg p-2.5  focus:ring-2 focus:ring-green-500 outline-none' />
 
                                         <select className='w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-green-500  outline-none bg-white' 
-                                        value={editing.category}
-                                        onChange={(e)=>setEditing({...editing,category:e.target.value})}
+                                       value={editing.category}
+  onChange={(e) => {
+    const selected = categories.find(
+      (c) => c.label === e.target.value
+    );
+
+    if (!selected) return;
+
+    setEditing({
+      ...editing,
+      category: selected.label,
+      slug: selected.value,
+    });
+  }}
                                         >
 
                                             <option > Select Category</option>
                                             {categories?.map((c,i)=>(
-                                                <option key={i} value={c}>{c}</option>
+                                                <option key={i} value={c.label}>{c.label}</option>
                                             ))}
                                         </select>
 

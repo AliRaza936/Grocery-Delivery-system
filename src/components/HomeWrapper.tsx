@@ -16,7 +16,7 @@ interface IUser{
 }
 
 interface Props {
-  user: IUser 
+  user: IUser | null
 }
 
 const HomeWrapper = ({ user }: Props) => {

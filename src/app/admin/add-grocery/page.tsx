@@ -10,23 +10,25 @@ import toast from "react-hot-toast";
 
 
 
-  const categories =[
-            "Fruits & Vegetables",
-            "Dairy & Eggs",
-            "Breakfast Essentials",
-            "Rice, Atta & Grains",
-            "Snacks & Biscuits",
-            "Spices & Masalas",
-            "Beverages & Drinks",
-            "Personal Care",
-            "Household Essentials",
-            "Instant & Packaged Foods",
-            "Baby & Pet Care"
-        ]
+ const categories = [
+  { id: 1, label: "Fruits & Vegetables", value: "fruits-vegetables" },
+  { id: 2, label: "Dairy & Eggs", value: "dairy-eggs" },
+  { id: 3, label: "Breakfast Essentials", value: "breakfast-essentials" },
+  { id: 4, label: "Rice, Atta & Grains", value: "rice-atta-and-grains" },
+  { id: 5, label: "Snacks & Biscuits", value: "snacks-and-biscuits" },
+  { id: 6, label: "Spices & Masalas", value: "spices-and-masalas" },
+  { id: 7, label: "Beverages & Drinks", value: "beverages-and-drinks" },
+  { id: 8, label: "Personal Care", value: "personal-care" },
+  { id: 9, label: "Household Essentials", value: "household-essentials" },
+  { id: 10, label: "Instant & Packaged Food", value: "instant-packaged-food" },
+  { id: 11, label: "Baby & Pet Care", value: "baby-pet-care" },
+]
+
         const units = ["kg","g","liter","ml","piece","pack"] 
 function AddGrocery() {
   const [name,setName] = useState("")
   const [category,setCategory] = useState("")
+  const [slug,setSlug] = useState("")
   const [unit,setUnit] = useState("")
   const [price,setPrice] = useState("")
   const [preview,setPreview] = useState<string|null>()
@@ -62,6 +64,7 @@ if(!backendImage){
     const formData = new FormData()
     formData.append('name',name)
     formData.append('category',category)
+    formData.append("slug", slug)
     formData.append('price',price)
     formData.append('unit',unit)
 
@@ -119,10 +122,16 @@ if(!backendImage){
             <div className="grid grid-cols-1  sm:grid-cols-2 gap-3">
               <div>
                 <label htmlFor="" className="block text-gray-700 font-medium mb-1">Category <span className="text-red-500">*</span></label>
-                <select name="Category" value={category} className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all bg-white " onChange={(e)=>setCategory(e.target.value)} >
+                <select name="Category" value={category} className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-green-400 transition-all bg-white " onChange={(e) => {
+    const selected = categories.find(
+      c => c.label === e.target.value
+    )
+    setCategory(selected?.label || "")
+    setSlug(selected?.value || "")
+  }} >
                   <option value="">Select Category</option>
                   {categories.map(cat=>(
-                    <option key={cat} value={cat} className="">{cat}</option>
+                    <option key={cat.id} value={cat.label} className="">{cat.label}</option>
                   ))}
                 </select>
               </div>

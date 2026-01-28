@@ -16,11 +16,12 @@ try {
     const name = formData.get("name") as string;
     const groceryId = formData.get("groceryId") as string;
     const category = formData.get("category") as string;
+    const slug = formData.get("slug") as string;
     const price = formData.get("price") as string;
     const file = formData.get("image") as Blob | null;
     const unit = formData.get("unit") as string;
     let imageUrl
-
+console.log(slug)
     if(file){
         imageUrl =  await uploadOnCloudunary(file);
             }
@@ -28,6 +29,7 @@ try {
                 name,
                 category,
                 price,
+                slug,
                 unit,
                 image:imageUrl,
             })

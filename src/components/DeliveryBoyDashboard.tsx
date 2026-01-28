@@ -28,7 +28,7 @@ interface Location {
   latitude: number;
   longitude: number;
 }
-function DeliveryBoyDashboard({ earning }: { earning: number }) {
+function DeliveryBoyDashboard({ earning,totalEarning }: { earning: number,totalEarning:number }) {
   const [assignments, setassignments] = useState<any[]>();
   const { userData } = useSelector((state: RootState) => state.user);
   const [activeOrder, setActiveOrder] = useState<any>(null);
@@ -299,6 +299,9 @@ function DeliveryBoyDashboard({ earning }: { earning: number }) {
 
             <p className="mt-4 text-lg font-bold text-green-700 ">
               Rs.{earning || 0} Earned Today
+            </p>
+            <p className="mt-4 text-lg font-bold text-green-700 ">
+              Rs.{totalEarning || 0} Total Earnings
             </p>
             <button
               onClick={() => window.location.reload()}

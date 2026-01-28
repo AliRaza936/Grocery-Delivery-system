@@ -32,7 +32,7 @@ interface IUser {
   role: "user" | "deliveryBoy" | "admin" | 'dummy_admin';
   image?: string;
 }
-function Nav({ user }: { user: IUser }) {
+function Nav({ user }: { user: IUser | null }) {
   const [open, setOpen] = useState(false);
   const profileDropDown = React.useRef<HTMLDivElement>(null);
   const [searchBarOpen, setSearchBarOpen] = useState(false);

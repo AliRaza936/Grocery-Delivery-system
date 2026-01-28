@@ -2,20 +2,90 @@
 import { Apple, Baby, Box, ChevronLeft, ChevronRight, Coffee, Cookie, CookieIcon, Flame, Heart, Home, Milk, Wheat } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react'
 import {motion} from "motion/react"
+import { useRouter } from "next/navigation";
+
 function CategoriesSlider() {
-    const categories = [
-  { id: 1, name: "Fruits & Vegetables", icon: Apple, color: "bg-green-100" },
-  { id: 2, name: "Dairy & Eggs", icon: Milk, color: "bg-yellow-100" },
-  { id: 3, name: "Breakfast Essentials", icon: CookieIcon, color: "bg-amber-100" },
-  { id: 4, name: "Rice, Atta & Grains", icon: Wheat, color: "bg-orange-100" },
-  { id: 5, name: "Snacks & Biscuits", icon: Cookie, color: "bg-pink-100" },
-  { id: 6, name: "Spices & Masalas", icon: Flame, color: "bg-red-100" },
-  { id: 7, name: "Beverages & Drinks", icon: Coffee, color: "bg-blue-100" },
-  { id: 8, name: "Personal Care", icon: Heart, color: "bg-purple-100" },
-  { id: 9, name: "Household Essentials", icon: Home, color: "bg-lime-100" },
-  { id: 10, name: "Instant & Packaged Food", icon: Box, color: "bg-teal-100" },
-  { id: 11, name: "Baby & Pet Care", icon: Baby, color: "bg-rose-100" },
-];
+  const router = useRouter();
+const categories = [
+  {
+    id: 1,
+    label: "Fruits & Vegetables",
+    value: "fruits-vegetables",
+    icon: Apple,
+    color: "bg-green-100",
+  },
+  {
+    id: 2,
+    label: "Dairy & Eggs",
+    value: "dairy-eggs",
+    icon: Milk,
+    color: "bg-yellow-100",
+  },
+  {
+    id: 3,
+    label: "Breakfast Essentials",
+    value: "breakfast-essentials",
+    icon: CookieIcon,
+    color: "bg-amber-100",
+  },
+  {
+    id: 4,
+    label: "Rice, Atta & Grains",
+    value: "rice-atta-and-grains",
+    icon: Wheat,
+    color: "bg-orange-100",
+  },
+  {
+    id: 5,
+    label: "Snacks & Biscuits",
+    value: "snacks-and-biscuits",
+    icon: Cookie,
+    color: "bg-pink-100",
+  },
+  {
+    id: 6,
+    label: "Spices & Masalas",
+    value: "spices-and-masalas",
+    icon: Flame,
+    color: "bg-red-100",
+  },
+  {
+    id: 7,
+    label: "Beverages & Drinks",
+    value: "beverages-and-drinks",
+    icon: Coffee,
+    color: "bg-blue-100",
+  },
+  {
+    id: 8,
+    label: "Personal Care",
+    value: "personal-care",
+    icon: Heart,
+    color: "bg-purple-100",
+  },
+  {
+    id: 9,
+    label: "Household Essentials",
+    value: "household-essentials",
+    icon: Home,
+    color: "bg-lime-100",
+  },
+  {
+    id: 10,
+    label: "Instant & Packaged Food",
+    value: "instant-packaged-food",
+    icon: Box,
+    color: "bg-teal-100",
+  },
+  {
+    id: 11,
+    label: "Baby & Pet Care",
+    value: "baby-pet-care",
+    icon: Baby,
+    color: "bg-rose-100",
+  },
+]
+
 
 const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -71,12 +141,13 @@ useEffect(()=>{
             const Icon = cat?.icon
             return <motion.div
   key={cat.id}
+   onClick={() => router.push(`/user/category/${cat.value}`)}
   className={`flex flex-col items-center justify-center rounded-2xl ${cat.color} shadow-md hover:shadow-xl transition-all cursor-pointer min-w-[110px] sm:min-w-[120px] md:min-w-[150px] lg:min-w-[180px]`}
 >
   <div className="flex flex-col justify-center items-center p-3 sm:p-4 md:p-5">
     <Icon className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 text-green-700 mb-2 sm:mb-3" />
     <p className="text-center text-xs sm:text-sm md:text-base font-semibold text-gray-700">
-      {cat.name}
+      {cat.label}
     </p>
   </div>
 </motion.div>

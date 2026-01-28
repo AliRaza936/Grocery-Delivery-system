@@ -15,6 +15,7 @@ try {
     const formData = await req.formData();
     const name = formData.get("name") as string;
     const category = formData.get("category") as string;
+    const slug = formData.get("slug") as string;
     const price = formData.get("price") as string;
     const file = formData.get("image") as Blob | null;
     const unit = formData.get("unit") as string;
@@ -26,6 +27,7 @@ try {
             const grocery = await Grocery.create({
                 name,
                 category,
+                slug,
                 price,
                 unit,
                 image:imageUrl,

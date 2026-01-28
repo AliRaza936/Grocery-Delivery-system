@@ -4,36 +4,46 @@ export interface IGrocery {
   _id?: mongoose.Types.ObjectId;
   name: string;
   category: string;
+  slug: string;
   price: string;
   unit: string;
   image: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
-const GrocerySchema = new mongoose.Schema<IGrocery>({
+const GrocerySchema = new mongoose.Schema<IGrocery>(
+  {
     name: { type: String, required: true },
-    category: { type: String, 
+    category: {
+      type: String,
 
-        enum:[
-            "Fruits & Vegetables",
-            "Dairy & Eggs",
-            "Breakfast Essentials",
-            "Rice, Atta & Grains",
-            "Snacks & Biscuits",
-            "Spices & Masalas",
-            "Beverages & Drinks",
-            "Personal Care",
-            "Household Essentials",
-            "Instant & Packaged Foods",
-            "Baby & Pet Care",
-
-        ],
-        required: true
-     },
+      enum: [
+        "Fruits & Vegetables",
+        "Dairy & Eggs",
+        "Breakfast Essentials",
+        "Rice, Atta & Grains",
+        "Snacks & Biscuits",
+        "Spices & Masalas",
+        "Beverages & Drinks",
+        "Personal Care",
+        "Household Essentials",
+        "Instant & Packaged Foods",
+        "Baby & Pet Care",
+      ],
+      required: true,
+    },
+    slug: { type: String, required: true, index: true },
     price: { type: String, required: true },
-    unit: { type: String, required: true,enum:["kg","g","liter","ml","piece","pack"] },
+    unit: {
+      type: String,
+      required: true,
+      enum: ["kg", "g", "liter", "ml", "piece", "pack"],
+    },
     image: { type: String, required: true },
-},{timestamps:true});
+  },
+  { timestamps: true },
+);
 
-const Grocery = mongoose.models.Grocery || mongoose.model("Grocery", GrocerySchema);
+const Grocery =
+  mongoose.models.Grocery || mongoose.model("Grocery", GrocerySchema);
 export default Grocery;

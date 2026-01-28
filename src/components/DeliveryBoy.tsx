@@ -18,9 +18,11 @@ async function DeliveryBoy() {
   const todayOrder = orders.filter((o)=>new Date(o.deliveredAt).toDateString()===today).length
   const   todayEarning = todayOrder * 120
 
+  const totalEarning = orders.length * 120
+
   return (
     <>
-    <DeliveryBoyDashboard earning={todayEarning}/>
+    <DeliveryBoyDashboard earning={todayEarning} totalEarning={totalEarning}/>
     </>
   )
 }
