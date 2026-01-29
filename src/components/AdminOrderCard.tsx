@@ -19,10 +19,13 @@ function AdminOrderCard({ order }: { order: IOrderPopulated }) {
          updateStatus = async (orderId:string,status:string)=>{
           try {
             const result = await axios.post(`/api/admin/update-order-status/${orderId}`,{status})
-
+console.log(result.data)
 let availableBoys = result.data.availableBoys
             if(status == "out of delivery" &&availableBoys?.length == 0 ){
               toast.error("No delivery boy available right now. Please try again later.")
+            }
+            if(result.data.message){
+              toast.error(result.data.message)
             }
             setStatus(status)
           } catch (error) {

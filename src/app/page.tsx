@@ -53,7 +53,7 @@ if(searchParams.q){
       {user?.role == "deliveryBoy" ? (
         <DeliveryBoy />
         
-      ) : user?.role == "admin" ? (
+      ) : (user?.role == "admin" || user?.role == "dummy_admin") ? (
         <AdminDashboard />
       ) : (
         <UserDashboard groceriesList={groceryList} q={searchParams.q}/>

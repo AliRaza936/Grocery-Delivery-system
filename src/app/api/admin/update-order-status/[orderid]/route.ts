@@ -26,6 +26,7 @@ export async function POST(req:NextRequest,context:{params:Promise<{orderid:stri
             const {latitude,longitude} =await order.address
             const nearByDeliveryBoy = await User.find({
                 role:"deliveryBoy",
+                isOnline: true,
                 location:{
                     $near:{
                         $geometry:{type:'Point',coordinates:[Number(longitude),Number(latitude)]},
@@ -66,7 +67,7 @@ export async function POST(req:NextRequest,context:{params:Promise<{orderid:stri
                 await deliveryAssignment.populate('order')
             for(const boyId of candidates){
                 const boy = await  User.findById(boyId)
-                if(boy.socketId){
+                if(boy.socketId&& boy.isOnline){
                     await emitEventHandler('new-assignment',deliveryAssignment,boy.socketId)
                 }
             }
