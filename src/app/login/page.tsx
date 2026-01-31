@@ -41,7 +41,7 @@ const handleLogin = async (e: React.FormEvent) => {
   try {
     const result = await signIn("credentials", {
       redirect: false,
-      email,
+      email: email.toLowerCase().trim(),
       password,
     });
 
