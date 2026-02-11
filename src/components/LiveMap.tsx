@@ -1,14 +1,17 @@
-import React, { useEffect } from "react";
+"use client";
+
+import React, { useEffect, useRef } from "react";
 import L from "leaflet";
 import {
   MapContainer,
   Marker,
-  Polyline,
   Popup,
   TileLayer,
   useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
+import "leaflet-routing-machine";
 
 interface Location {
   latitude: number;
@@ -20,28 +23,57 @@ interface IProp {
   deliveryBoyLocation: Location;
 }
 
-function Recenter({user,  delivery,}: {user: Location;  delivery: Location;}) {
+
+function RoutingMachine({ user, delivery }: { user: Location; delivery: Location }) {
   const map = useMap();
+  const routingRef = React.useRef<any>(null);
 
   useEffect(() => {
+    if (!map) return;
     if (
       user.latitude === 0 ||
       user.longitude === 0 ||
       delivery.latitude === 0 ||
       delivery.longitude === 0
-    )
-      return;
+    ) return;
 
-    const bounds = L.latLngBounds([
-      [user.latitude, user.longitude],
-      [delivery.latitude, delivery.longitude],
-    ]);
+    if (routingRef.current) {
+      try {
+        
+        if (routingRef.current._container) {
+          map.removeControl(routingRef.current);
+        }
+      } catch (err) {
+        console.log("Previous route removal skipped", err);
+      }
+    }
 
-    map.fitBounds(bounds, {
-      padding: [60, 60],
-      animate: true,
-    });
-  }, [user, delivery, map]);
+    
+    routingRef.current = (L as any).Routing.control({
+      waypoints: [
+        L.latLng(user.latitude, user.longitude),
+        L.latLng(delivery.latitude, delivery.longitude),
+      ],
+      lineOptions: { styles: [{ color: "green", weight: 5 }] },
+      routeWhileDragging: false,
+      addWaypoints: false,
+      draggableWaypoints: false,
+      fitSelectedRoutes: true,
+      show: false,
+      createMarker: () => null, 
+      
+    }).addTo(map);
+
+    return () => {
+      try {
+        if (routingRef.current && routingRef.current._container) {
+          map.removeControl(routingRef.current);
+        }
+      } catch (err) {
+        console.log("Safe cleanup skipped", err);
+      }
+    };
+  }, [user.latitude, user.longitude, delivery.latitude, delivery.longitude, map]);
 
   return null;
 }
@@ -62,13 +94,6 @@ function LiveMap({ userLocation, deliveryBoyLocation }: IProp) {
     deliveryBoyLocation.latitude !== 0 &&
     deliveryBoyLocation.longitude !== 0;
 
-  const linePosition = hasDelivery
-    ? [
-        [userLocation.latitude, userLocation.longitude],
-        [deliveryBoyLocation.latitude, deliveryBoyLocation.longitude],
-      ]
-    : [];
-
   return (
     <div className="w-full h-[500px] rounded-xl overflow-hidden shadow relative">
       <MapContainer
@@ -78,14 +103,10 @@ function LiveMap({ userLocation, deliveryBoyLocation }: IProp) {
         className="w-full h-full"
       >
         <TileLayer
-          attribution='&copy; OpenStreetMap contributors'
+          attribution="&copy; OpenStreetMap contributors"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-
-        {hasDelivery && (
-          <Recenter user={userLocation} delivery={deliveryBoyLocation} />
-        )}
 
         <Marker
           position={[userLocation.latitude, userLocation.longitude]}
@@ -93,7 +114,6 @@ function LiveMap({ userLocation, deliveryBoyLocation }: IProp) {
         >
           <Popup>Delivery Address</Popup>
         </Marker>
-
 
         {hasDelivery && (
           <Marker
@@ -104,11 +124,14 @@ function LiveMap({ userLocation, deliveryBoyLocation }: IProp) {
             icon={deliveryBoyIcon}
           >
             <Popup>Delivery Boy</Popup>
-          </Marker>
+        </Marker>
         )}
 
         {hasDelivery && (
-          <Polyline positions={linePosition as any} color="green" />
+          <RoutingMachine
+            user={userLocation}
+            delivery={deliveryBoyLocation}
+          />
         )}
       </MapContainer>
     </div>
