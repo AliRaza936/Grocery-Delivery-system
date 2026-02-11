@@ -1,17 +1,14 @@
-"use client";
-
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import L from "leaflet";
 import {
   MapContainer,
   Marker,
+  Polyline,
   Popup,
   TileLayer,
   useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
-import "leaflet-routing-machine";
 
 interface Location {
   latitude: number;
@@ -23,61 +20,34 @@ interface IProp {
   deliveryBoyLocation: Location;
 }
 
-
-function RoutingMachine({ user, delivery }: { user: Location; delivery: Location }) {
+function Recenter({
+  user,
+  delivery,
+}: {
+  user: Location;
+  delivery: Location;
+}) {
   const map = useMap();
-  const routingRef = React.useRef<any>(null);
 
   useEffect(() => {
-    if (!map) return;
     if (
       user.latitude === 0 ||
       user.longitude === 0 ||
       delivery.latitude === 0 ||
       delivery.longitude === 0
-    ) return;
+    )
+      return;
 
-    if (routingRef.current) {
-      try {
-        
-        if (routingRef.current._container) {
-          map.removeControl(routingRef.current);
-        }
-      } catch (err) {
-        console.log("Previous route removal skipped", err);
-      }
-    }
+    const bounds = L.latLngBounds([
+      [user.latitude, user.longitude],
+      [delivery.latitude, delivery.longitude],
+    ]);
 
-    
-    routingRef.current = (L as any).Routing.control({
-      waypoints: [
-        L.latLng(user.latitude, user.longitude),
-        L.latLng(delivery.latitude, delivery.longitude),
-      ],
-      lineOptions: { styles: [{ color: "green", weight: 5 }] },
-      routeWhileDragging: false,
-      addWaypoints: false,
-      draggableWaypoints: false,
-      fitSelectedRoutes: true,
-      show: false,
-      createMarker: () => null, 
-      
-    }).addTo(map);
-
-    return () => {
-      try {
-        if (routingRef.current && routingRef.current._container) {
-          map.removeControl(routingRef.current);
-        }
-      } catch (err) {
-        console.log("Safe cleanup skipped", err);
-      }
-    };
-  }, [user.latitude, user.longitude, delivery.latitude, delivery.longitude, map]);
+    map.fitBounds(bounds, { padding: [60, 60], animate: true });
+  }, [user, delivery, map]);
 
   return null;
 }
-
 
 function LiveMap({ userLocation, deliveryBoyLocation }: IProp) {
   const deliveryBoyIcon = L.icon({
@@ -94,6 +64,13 @@ function LiveMap({ userLocation, deliveryBoyLocation }: IProp) {
     deliveryBoyLocation.latitude !== 0 &&
     deliveryBoyLocation.longitude !== 0;
 
+  const linePosition = hasDelivery
+    ? [
+        [userLocation.latitude, userLocation.longitude],
+        [deliveryBoyLocation.latitude, deliveryBoyLocation.longitude],
+      ]
+    : [];
+
   return (
     <div className="w-full h-[500px] rounded-xl overflow-hidden shadow relative">
       <MapContainer
@@ -107,32 +84,24 @@ function LiveMap({ userLocation, deliveryBoyLocation }: IProp) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
+        {hasDelivery && (
+          <Recenter user={userLocation} delivery={deliveryBoyLocation} />
+        )}
 
-        <Marker
-          position={[userLocation.latitude, userLocation.longitude]}
-          icon={userIcon}
-        >
+        <Marker position={[userLocation.latitude, userLocation.longitude]} icon={userIcon}>
           <Popup>Delivery Address</Popup>
         </Marker>
 
         {hasDelivery && (
           <Marker
-            position={[
-              deliveryBoyLocation.latitude,
-              deliveryBoyLocation.longitude,
-            ]}
+            position={[deliveryBoyLocation.latitude, deliveryBoyLocation.longitude]}
             icon={deliveryBoyIcon}
           >
             <Popup>Delivery Boy</Popup>
-        </Marker>
+          </Marker>
         )}
 
-        {hasDelivery && (
-          <RoutingMachine
-            user={userLocation}
-            delivery={deliveryBoyLocation}
-          />
-        )}
+        {hasDelivery && <Polyline positions={linePosition as any} color="green" />}
       </MapContainer>
     </div>
   );
