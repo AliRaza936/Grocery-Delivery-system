@@ -9,7 +9,12 @@ export async function POST(req: NextRequest) {
     await dbConnect();
 
     const { email, password } = await req.json();
-
+    if (!email || !password) {
+      return NextResponse.json(
+        { success: false, message: "Email and password are required" },
+        { status: 400 }
+      );
+    }
     // 1. Check user exists
     const user = await User.findOne({ email });
 
@@ -37,7 +42,7 @@ export async function POST(req: NextRequest) {
         email: user.email,
         role: user.role,
       },
-      process.env.JWT_SECRET!,
+      process.env.AUTH_SECRET!,
       { expiresIn: "7d" }
     );
 
@@ -56,7 +61,7 @@ export async function POST(req: NextRequest) {
 
   } catch (error) {
     return NextResponse.json(
-      { success: false, message: `login error ${error}` },
+        { success: false, message: "An error occurred during login" },
       { status: 500 }
     );
   }
