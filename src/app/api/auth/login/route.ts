@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
         role: user.role,
       },
       process.env.AUTH_SECRET!,
-      { expiresIn: "7d" }
+      
     );
 
     // 4. Return response
