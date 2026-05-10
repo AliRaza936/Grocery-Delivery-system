@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/config/db";
 import User from "@/models/user.model";
-import { verifyToken } from "@/lib/auth";
+import { verifyToken } from "@/config/authCheck";
+
+
 
 export async function GET(req: Request) {
   try {
@@ -18,7 +20,7 @@ export async function GET(req: Request) {
     }
 
     // 👤 fetch user from DB
-    const user = await User.findById(userData.id).select("-password");
+    const user = await User.findById(userData?.id).select("-password");
 
     if (!user) {
       return NextResponse.json(

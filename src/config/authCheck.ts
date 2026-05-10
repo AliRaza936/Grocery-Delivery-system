@@ -1,13 +1,18 @@
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
-export const verifyToken = (req: Request) => {
+export interface UserData {
+  id: string;
+  email?: string;
+  role?: string;
+}
+
+export const verifyToken = (req: Request): UserData | null => {
   try {
     const authHeader = req.headers.get("authorization");
 
     if (!authHeader) return null;
 
     const token = authHeader.split(" ")[1];
-
     if (!token) return null;
 
     const decoded = jwt.verify(
@@ -15,7 +20,12 @@ export const verifyToken = (req: Request) => {
       process.env.AUTH_SECRET as string
     );
 
-    return decoded; // contains id, email, role
+    // Ensure it's an object (not string)
+    if (typeof decoded !== "object" || decoded === null) {
+      return null;
+    }
+
+    return decoded as UserData;
   } catch (error) {
     return null;
   }
