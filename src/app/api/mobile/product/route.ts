@@ -18,6 +18,8 @@ export async function GET(req: NextRequest) {
       filter.$or = [
         { name: { $regex: q, $options: "i" } },
         { category: { $regex: q, $options: "i" } },
+        { slug: { $regex: q, $options: "i" } },
+        
       ];
     }
 
