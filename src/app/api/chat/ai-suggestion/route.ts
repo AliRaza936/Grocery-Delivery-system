@@ -18,7 +18,7 @@ Your task:
 - If role is "delivery_boy" → generate 3 short WhatsApp-style reply suggestions that a delivery boy could send to the user.
 
 ⚠️ Follow these rules:
-- Replies must match the context of the last message.
+- Replies must match the context of th\e last message.
 - Keep replies short, human-like (max 10 words).
 - Use emojis naturally (max one per reply).
 - No generic replies like "Okay" or "Thank you".
