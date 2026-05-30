@@ -22,6 +22,7 @@ let dbConnect = async () => {
 
     // 🔥 FORCE LOAD MODELS HERE
     await import("@/models/order.model");
+    await import("@/models/user.model");
     await import("@/models/deliveryAssignment.model");
   }
 

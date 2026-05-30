@@ -114,21 +114,21 @@ function DeliveryBoyDashboard({ earning,totalEarning }: { earning: number,totalE
     };
   }, []);
 
-  const fetchCurrentOrder = async () => {
-    try {
-      const result = await axios.get("/api/delivery/current-order");
+    const fetchCurrentOrder = async () => {
+      try {
+        const result = await axios.get("/api/delivery/current-order");
 
-      if (result.data.active) {
-        setActiveOrder(result.data.assignment);
-        setUserLoation({
-          latitude: result.data.assignment.order.address.latitude,
-          longitude: result.data.assignment.order.address.longitude,
-        });
+        if (result.data.active) {
+          setActiveOrder(result.data.assignment);
+          setUserLoation({
+            latitude: result.data.assignment.order.address.latitude,
+            longitude: result.data.assignment.order.address.longitude,
+          });
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    };
   useEffect(() => {
     fetchCurrentOrder();
     fetchAssignments();
